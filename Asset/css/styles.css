@@ -1,0 +1,391 @@
+:root {
+    color-scheme: light;
+    --primary: #d40000;
+    --dark: #111827;
+    --muted: #6b7280;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e5e7eb;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--dark);
+    background: var(--bg);
+    line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+.headline {
+    font-family: 'Times New Roman', Georgia, serif;
+    letter-spacing: -0.01em;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.container {
+    width: min(1100px, 90%);
+    margin: 0 auto;
+}
+
+.narrow {
+    width: min(760px, 90%);
+    margin: 0 auto;
+}
+
+.site-header {
+    background: var(--primary);
+    color: white;
+    border-bottom: 4px solid #b00000;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: white;
+    padding: 4px;
+}
+
+.main-nav {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.main-nav .nav-link {
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.35);
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.hero {
+    padding: 3.5rem 0 2.5rem;
+    background: white;
+    border-bottom: 2px solid var(--border);
+}
+
+.hero-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    align-items: center;
+}
+
+.hero-card {
+    background: #fff5f5;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 2px solid var(--primary);
+    box-shadow: none;
+}
+
+.eyebrow {
+    text-transform: uppercase;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+}
+
+.headline-xl {
+    font-size: clamp(2.5rem, 3vw + 1.5rem, 3.8rem);
+    line-height: 1.05;
+    color: var(--primary);
+    text-transform: uppercase;
+}
+
+.headline-md {
+    font-size: 1.8rem;
+}
+
+.section {
+    padding: 3rem 0;
+}
+
+.section.alt {
+    background: #fff5f5;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.card-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    border: none;
+    border-radius: 999px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.btn-small {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--dark);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--primary);
+}
+
+.link {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.tag {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.checklist {
+    list-style: none;
+    margin: 1rem 0;
+}
+
+.checklist li::before {
+    content: '✔';
+    margin-right: 0.5rem;
+    color: var(--primary);
+}
+
+.info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-top: 1.5rem;
+}
+
+.form-grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.form-grid label {
+    display: grid;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.form-grid input,
+.form-grid textarea,
+.search-bar input {
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 1rem;
+}
+
+.form-grid .full {
+    grid-column: 1 / -1;
+}
+
+.search-bar {
+    display: flex;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+}
+
+.search-bar input {
+    flex: 1;
+}
+
+.comment {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.comment-form textarea {
+    width: 100%;
+    min-height: 120px;
+    margin-bottom: 1rem;
+}
+
+.profile-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.pagination {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table th,
+.table td {
+    padding: 0.9rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+.pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.pill {
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    font-weight: 600;
+}
+
+.site-footer {
+    background: #0b0b0b;
+    color: white;
+    padding: 2rem 0;
+    margin-top: 2rem;
+}
+
+.site-header .btn-outline {
+    border-color: rgba(255, 255, 255, 0.6);
+    color: white;
+}
+
+.site-header .btn-primary {
+    background: white;
+    color: var(--primary);
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.footer-links {
+    display: grid;
+    gap: 0.5rem;
+}
+
+@media (max-width: 720px) {
+    .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+        padding-top: 0.5rem;
+    }
+
+    .main-nav {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .main-nav .nav-link {
+        padding-left: 0;
+    }
+}

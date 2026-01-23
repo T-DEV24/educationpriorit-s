@@ -10,30 +10,23 @@
 </head>
 <body>
     <header class="site-header">
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container header-inner">
-                <a class="logo navbar-brand" href="/">
-                    <img src="/Asset/logo.svg" alt="Logo EducationPriorité">
-                    <span>EducationPriorité</span>
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Basculer la navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="mainNavbar">
-                    <nav class="main-nav navbar-nav me-auto mb-2 mb-lg-0">
-                        <a class="nav-link" href="/">Accueil</a>
-                        <a class="nav-link" href="/rubriques">Rubriques</a>
-                        <a class="nav-link" href="/boutique">Journal PDF</a>
-                        <a class="nav-link" href="/a-propos">À propos</a>
-                        <a class="nav-link" href="/contact">Contact</a>
-                    </nav>
-                    <div class="header-actions d-flex gap-2">
-                        <a class="btn btn-outline" href="/connexion">Connexion</a>
-                        <a class="btn btn-primary" href="/inscription">Inscription</a>
-                    </div>
-                </div>
+        <div class="container header-inner">
+            <a class="logo" href="/">
+                <img src="/Asset/logo.svg" alt="Logo EducationPriorité">
+                <span>EducationPriorité</span>
+            </a>
+            <nav class="main-nav">
+                <a href="/">Accueil</a>
+                <a href="/rubriques">Rubriques</a>
+                <a href="/boutique">Journal PDF</a>
+                <a href="/a-propos">À propos</a>
+                <a href="/contact">Contact</a>
+            </nav>
+            <div class="header-actions d-flex gap-2 flex-wrap">
+                <a class="btn btn-outline" href="/connexion">Connexion</a>
+                <a class="btn btn-primary" href="/inscription">Inscription</a>
             </div>
-        </nav>
+        </div>
     </header>
 
     <main>

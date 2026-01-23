@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= isset($title) ? htmlspecialchars($title) . ' | ' : '' ?>EducationPriorité</title>
+    <meta name="description" content="EducationPriorité : journal d'information éducative, articles, dossiers et boutique PDF.">
     <title><?= isset($title) ? htmlspecialchars($title) . ' | ' : '' ?>Journal Éducatif</title>
     <meta name="description" content="Journal d'information éducative : actualités, dossiers, enquêtes et boutique PDF.">
     <link rel="stylesheet" href="/Asset/css/styles.css">
@@ -10,6 +12,10 @@
 <body>
     <header class="site-header">
         <div class="container header-inner">
+            <a class="logo" href="/">
+                <img src="/Asset/logo.svg" alt="Logo EducationPriorité">
+                <span>EducationPriorité</span>
+            </a>
             <a class="logo" href="/">Journal Éducatif</a>
             <nav class="main-nav">
                 <a href="/">Accueil</a>
@@ -32,6 +38,7 @@
     <footer class="site-footer">
         <div class="container footer-inner">
             <div>
+                <strong>EducationPriorité</strong>
                 <strong>Journal Éducatif</strong>
                 <p>Média numérique pour la communauté éducative.</p>
             </div>

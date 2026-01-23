@@ -1,5 +1,11 @@
 :root {
     color-scheme: light;
+    --primary: #d40000;
+    --dark: #111827;
+    --muted: #6b7280;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e5e7eb;
     --primary: #1f6feb;
     --dark: #0f172a;
     --muted: #64748b;
@@ -15,10 +21,19 @@
 }
 
 body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     font-family: 'Segoe UI', system-ui, sans-serif;
     color: var(--dark);
     background: var(--bg);
     line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+.headline {
+    font-family: 'Times New Roman', Georgia, serif;
+    letter-spacing: -0.01em;
 }
 
 a {
@@ -37,6 +52,9 @@ a {
 }
 
 .site-header {
+    background: var(--primary);
+    color: white;
+    border-bottom: 4px solid #b00000;
     background: var(--card);
     border-bottom: 1px solid var(--border);
     position: sticky;
@@ -64,6 +82,9 @@ a {
 .logo img {
     width: 40px;
     height: 40px;
+    border-radius: 8px;
+    background: white;
+    padding: 4px;
 }
 
 .main-nav {
@@ -72,12 +93,22 @@ a {
     flex-wrap: wrap;
 }
 
+.main-nav a {
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
 .header-actions {
     display: flex;
     gap: 0.5rem;
 }
 
 .hero {
+    padding: 3.5rem 0 2.5rem;
+    background: white;
+    border-bottom: 2px solid var(--border);
     padding: 3rem 0;
     background: linear-gradient(120deg, #eef2ff, #f8fafc);
 }
@@ -90,6 +121,11 @@ a {
 }
 
 .hero-card {
+    background: #fff5f5;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 2px solid var(--primary);
+    box-shadow: none;
     background: var(--card);
     padding: 2rem;
     border-radius: 16px;
@@ -104,11 +140,23 @@ a {
     font-size: 0.75rem;
 }
 
+.headline-xl {
+    font-size: clamp(2.5rem, 3vw + 1.5rem, 3.8rem);
+    line-height: 1.05;
+    color: var(--primary);
+    text-transform: uppercase;
+}
+
+.headline-md {
+    font-size: 1.8rem;
+}
+
 .section {
     padding: 3rem 0;
 }
 
 .section.alt {
+    background: #fff5f5;
     background: #eff6ff;
 }
 
@@ -186,6 +234,7 @@ a {
     text-transform: uppercase;
     color: var(--muted);
     font-weight: 600;
+    letter-spacing: 0.05em;
 }
 
 .muted {
@@ -305,10 +354,21 @@ a {
 }
 
 .site-footer {
+    background: #0b0b0b;
     background: var(--dark);
     color: white;
     padding: 2rem 0;
     margin-top: 2rem;
+}
+
+.site-header .btn-outline {
+    border-color: rgba(255, 255, 255, 0.6);
+    color: white;
+}
+
+.site-header .btn-primary {
+    background: white;
+    color: var(--primary);
 }
 
 .footer-inner {

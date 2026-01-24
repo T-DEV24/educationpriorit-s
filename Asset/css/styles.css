@@ -6,6 +6,12 @@
     --bg: #f8fafc;
     --card: #ffffff;
     --border: #e5e7eb;
+    --primary: #1f6feb;
+    --dark: #0f172a;
+    --muted: #64748b;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
 }
 
 * {
@@ -16,6 +22,7 @@
 
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Segoe UI', system-ui, sans-serif;
     color: var(--dark);
     background: var(--bg);
     line-height: 1.6;
@@ -48,6 +55,8 @@ a {
     background: var(--primary);
     color: white;
     border-bottom: 4px solid #b00000;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -100,6 +109,8 @@ a {
     padding: 3.5rem 0 2.5rem;
     background: white;
     border-bottom: 2px solid var(--border);
+    padding: 3rem 0;
+    background: linear-gradient(120deg, #eef2ff, #f8fafc);
 }
 
 .hero-grid {
@@ -115,6 +126,11 @@ a {
     border-radius: 12px;
     border: 2px solid var(--primary);
     box-shadow: none;
+    background: var(--card);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 }
 
 .eyebrow {
@@ -141,6 +157,7 @@ a {
 
 .section.alt {
     background: #fff5f5;
+    background: #eff6ff;
 }
 
 .section-header {
@@ -338,6 +355,7 @@ a {
 
 .site-footer {
     background: #0b0b0b;
+    background: var(--dark);
     color: white;
     padding: 2rem 0;
     margin-top: 2rem;
@@ -347,6 +365,8 @@ a {
     border-color: white;
     background: white;
     color: var(--primary);
+    border-color: rgba(255, 255, 255, 0.6);
+    color: white;
 }
 
 .site-header .btn-primary {

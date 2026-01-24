@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= isset($title) ? htmlspecialchars($title) . ' | ' : '' ?>EducationPriorité</title>
     <meta name="description" content="EducationPriorité : journal d'information éducative, articles, dossiers et boutique PDF.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <title><?= isset($title) ? htmlspecialchars($title) . ' | ' : '' ?>Journal Éducatif</title>
     <meta name="description" content="Journal d'information éducative : actualités, dossiers, enquêtes et boutique PDF.">
     <link rel="stylesheet" href="/Asset/css/styles.css">
@@ -24,6 +25,7 @@
                 <a href="/a-propos">À propos</a>
                 <a href="/contact">Contact</a>
             </nav>
+            <div class="header-actions d-flex gap-2 flex-wrap">
             <div class="header-actions">
                 <a class="btn btn-outline" href="/connexion">Connexion</a>
                 <a class="btn btn-primary" href="/inscription">Inscription</a>
@@ -49,5 +51,6 @@
             </div>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

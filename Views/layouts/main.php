@@ -43,6 +43,42 @@
 
     <footer class="site-footer">
         <div class="container footer-inner">
+            <div class="footer-brand">
+                <div class="logo">
+                    <img src="/Asset/logo.svg" alt="Logo EducationPriorité">
+                    <span>EducationPriorité</span>
+                </div>
+                <p>Média numérique pour la communauté éducative. Actualités, dossiers, enquêtes et PDF premium.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Facebook">Facebook</a>
+                    <a href="#" aria-label="WhatsApp">WhatsApp</a>
+                    <a href="#" aria-label="LinkedIn">LinkedIn</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <strong>Navigation</strong>
+                <a href="/rubriques">Rubriques</a>
+                <a href="/boutique">Journal PDF</a>
+                <a href="/recherche">Recherche</a>
+                <a href="/contact">Contact</a>
+            </div>
+            <div class="footer-links">
+                <strong>Compte</strong>
+                <a href="/connexion">Connexion</a>
+                <a href="/inscription">Inscription</a>
+                <a href="/profil">Mon profil</a>
+            </div>
+            <div class="footer-links">
+                <strong>Support</strong>
+                <a href="/a-propos">À propos</a>
+                <a href="/contact">Service client</a>
+                <a href="#">Mentions légales</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container footer-bottom-inner">
+                <span>© <?= date('Y') ?> EducationPriorité. Tous droits réservés.</span>
+                <button class="scroll-top" type="button" data-scroll-top>Haut de page</button>
             <div>
                 <strong>EducationPriorité</strong>
                 <strong>Journal Éducatif</strong>
@@ -56,6 +92,7 @@
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/Asset/js/main.js"></script>
     <script>
         const header = document.querySelector('.site-header');
         const toggle = document.querySelector('.nav-toggle');

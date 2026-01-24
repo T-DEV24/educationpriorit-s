@@ -17,6 +17,10 @@
                 <img src="/Asset/logo.svg" alt="Logo EducationPriorité">
                 <span>EducationPriorité</span>
             </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
+                <span></span>
+            </button>
+            <nav class="main-nav" id="main-nav">
             <a class="logo" href="/">Journal Éducatif</a>
             <nav class="main-nav">
                 <a href="/">Accueil</a>
@@ -52,5 +56,16 @@
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const header = document.querySelector('.site-header');
+        const toggle = document.querySelector('.nav-toggle');
+
+        if (header && toggle) {
+            toggle.addEventListener('click', () => {
+                const isOpen = header.classList.toggle('nav-open');
+                toggle.setAttribute('aria-expanded', String(isOpen));
+            });
+        }
+    </script>
 </body>
 </html>

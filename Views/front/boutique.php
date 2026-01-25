@@ -7,6 +7,29 @@
             </div>
             <a class="link" href="/profil/achats">Mes achats</a>
         </div>
+        <div class="section-header">
+            <div>
+                <h2 class="headline-md">Types d'accès au journal PDF</h2>
+                <p class="muted">Trois niveaux d'accès pour répondre à tous les besoins.</p>
+            </div>
+        </div>
+        <div class="card-grid">
+            <article class="card">
+                <h3>Accès public</h3>
+                <p class="muted">Pour tous les utilisateurs et visiteurs</p>
+                <p>Consultation libre des numéros gratuits.</p>
+            </article>
+            <article class="card">
+                <h3>Accès compte</h3>
+                <p class="muted">Réservé aux utilisateurs inscrits</p>
+                <p>Accès aux numéros inclus dans l'espace membre.</p>
+            </article>
+            <article class="card">
+                <h3>Accès paiement</h3>
+                <p class="muted">Disponible après achat</p>
+                <p>Téléchargement immédiat du PDF après paiement.</p>
+            </article>
+        </div>
         <div class="card-grid">
             <article class="card">
                 <h3>Numéro spécial Rentrée</h3>

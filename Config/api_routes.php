@@ -9,6 +9,8 @@ require_once __DIR__ . '/../Controllers/ArticleController.php';
 require_once __DIR__ . '/../Controllers/CategoryController.php';
 require_once __DIR__ . '/../Controllers/CommentsController.php';
 require_once __DIR__ . '/../Controllers/LikesController.php';
+require_once __DIR__ . '/../Controllers/CommentController.php';
+require_once __DIR__ . '/../Controllers/LikeController.php';
 require_once __DIR__ . '/../Controllers/PdfEditionsController.php';
 require_once __DIR__ . '/../Controllers/OrdersController.php';
 require_once __DIR__ . '/../Controllers/DownloadsController.php';
@@ -22,8 +24,10 @@ const API_RESOURCE_CONTROLLERS = [
     'categories' => CategoryController::class,
     'article' => ArticleController::class,
     'category' => CategoryController::class,
-    'comments' => CommentsController::class,
-    'likes' => LikesController::class,
+    'comments' => CommentController::class,
+    'comment' => CommentController::class,
+    'likes' => LikeController::class,
+    'like' => LikeController::class,
     'pdf-editions' => PdfEditionsController::class,
     'pdf_editions' => PdfEditionsController::class,
     'orders' => OrdersController::class,

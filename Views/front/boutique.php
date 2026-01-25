@@ -32,18 +32,30 @@
         </div>
         <div class="card-grid">
             <article class="card">
+                <div class="card-media">
+                    Couverture PDF
+                    <span class="media-caption">Format A4 • 28 pages</span>
+                </div>
                 <h3>Numéro spécial Rentrée</h3>
                 <p class="muted">Édition septembre 2024</p>
+                <p>Dossier spécial sur la rentrée, réformes et innovations pédagogiques.</p>
                 <p>Prix : 1 500 FCFA</p>
+                <p class="muted">Fichier : journal-rentree-2024.pdf</p>
                 <div class="card-actions">
                     <a class="btn btn-small" href="/boutique/numero">Détails</a>
                     <button class="btn btn-small btn-primary" type="button">Acheter</button>
                 </div>
             </article>
             <article class="card">
+                <div class="card-media">
+                    Couverture PDF
+                    <span class="media-caption">Format A4 • 24 pages</span>
+                </div>
                 <h3>Focus Innovation</h3>
                 <p class="muted">Édition août 2024</p>
+                <p>Panorama des initiatives numériques et des nouveaux outils éducatifs.</p>
                 <p>Prix : 1 000 FCFA</p>
+                <p class="muted">Fichier : journal-innovation-2024.pdf</p>
                 <div class="card-actions">
                     <a class="btn btn-small" href="/boutique/numero">Détails</a>
                     <button class="btn btn-small btn-primary" type="button">Acheter</button>

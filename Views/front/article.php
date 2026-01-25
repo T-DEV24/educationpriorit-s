@@ -13,12 +13,14 @@
             <button class="btn btn-ghost" type="button">Partager WhatsApp</button>
             <button class="btn btn-ghost" type="button">Partager Facebook</button>
         </div>
+        <p class="muted">1 like par utilisateur et par article. Connexion requise pour liker ou commenter.</p>
     </div>
 </section>
 
 <section class="section alt">
     <div class="container narrow">
         <h2>Commentaires</h2>
+        <p class="muted">Les commentaires sont modérés et publiés après validation.</p>
         <div class="comment">
             <p><strong>Aïssatou</strong> • 10 minutes</p>
             <p>Article très pertinent pour les enseignants.</p>

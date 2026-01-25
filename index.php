@@ -1,6 +1,7 @@
 <?php
 
 require __DIR__ . '/Config/routes.php';
+require __DIR__ . '/Config/api_routes.php';
 
 function render_view(string $view, array $data = [], string $title = ''): void
 {
@@ -15,6 +16,11 @@ function render_view(string $view, array $data = [], string $title = ''): void
 
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
 $uri = rtrim($uri, '/') ?: '/';
+
+if (strncmp($uri, '/api', 4) === 0) {
+    dispatch_api_request($uri, $_SERVER['REQUEST_METHOD'] ?? 'GET');
+    exit;
+}
 
 $routes = ROUTE_LIST;
 $route = $routes[$uri] ?? null;

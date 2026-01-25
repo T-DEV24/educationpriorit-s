@@ -12,6 +12,7 @@ require_once __DIR__ . '/../Controllers/OrdersController.php';
 require_once __DIR__ . '/../Controllers/DownloadsController.php';
 require_once __DIR__ . '/../Controllers/PagesController.php';
 require_once __DIR__ . '/../Controllers/MediaController.php';
+require_once __DIR__ . '/../Controllers/AuthController.php';
 
 const API_RESOURCE_CONTROLLERS = [
     'users' => UsersController::class,
@@ -33,6 +34,39 @@ function dispatch_api_request(string $uri, string $method): void
     $segments = $path === '' ? [] : explode('/', $path);
     $resource = $segments[0] ?? '';
     $id = $segments[1] ?? null;
+
+    if ($resource === 'auth') {
+        $action = $segments[1] ?? '';
+        $authController = new AuthController();
+
+        if ($method !== 'POST') {
+            http_response_code(405);
+            header('Allow: POST');
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'Méthode non autorisée.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            return;
+        }
+
+        if ($action === 'register') {
+            $authController->register();
+            return;
+        }
+
+        if ($action === 'login') {
+            $authController->login();
+            return;
+        }
+
+        if ($action === 'logout') {
+            $authController->logout();
+            return;
+        }
+
+        http_response_code(404);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['error' => 'Action auth introuvable.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return;
+    }
 
     if ($resource === '' || ! isset(API_RESOURCE_CONTROLLERS[$resource])) {
         http_response_code(404);

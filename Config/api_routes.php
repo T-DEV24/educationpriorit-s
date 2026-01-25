@@ -5,6 +5,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../Controllers/UsersController.php';
 require_once __DIR__ . '/../Controllers/ArticlesController.php';
 require_once __DIR__ . '/../Controllers/CategoriesController.php';
+require_once __DIR__ . '/../Controllers/ArticleController.php';
+require_once __DIR__ . '/../Controllers/CategoryController.php';
 require_once __DIR__ . '/../Controllers/CommentsController.php';
 require_once __DIR__ . '/../Controllers/LikesController.php';
 require_once __DIR__ . '/../Controllers/PdfEditionsController.php';
@@ -16,8 +18,10 @@ require_once __DIR__ . '/../Controllers/AuthController.php';
 
 const API_RESOURCE_CONTROLLERS = [
     'users' => UsersController::class,
-    'articles' => ArticlesController::class,
-    'categories' => CategoriesController::class,
+    'articles' => ArticleController::class,
+    'categories' => CategoryController::class,
+    'article' => ArticleController::class,
+    'category' => CategoryController::class,
     'comments' => CommentsController::class,
     'likes' => LikesController::class,
     'pdf-editions' => PdfEditionsController::class,

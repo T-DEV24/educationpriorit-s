@@ -22,6 +22,14 @@
             <button class="btn btn-outline" type="button">Payer avec Orange Money</button>
         </div>
         <div class="info-card">
+            <h3>Suivi de commande</h3>
+            <ul>
+                <li>Commande créée dès le lancement du paiement.</li>
+                <li>Statut : en attente → payé ou échec.</li>
+                <li>Accès au PDF activé après confirmation du paiement.</li>
+            </ul>
+        </div>
+        <div class="info-card">
             <h3>Accès sécurisé</h3>
             <p>Le téléchargement est disponible uniquement pour les acheteurs connectés.</p>
         </div>

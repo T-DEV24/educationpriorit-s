@@ -12,6 +12,7 @@
             </label>
             <button class="btn btn-primary" type="button">Se connecter</button>
         </form>
+        <p class="muted">Votre compte doit être activé pour accéder à votre profil et à vos achats.</p>
         <p class="muted">Pas encore de compte ? <a class="link" href="/inscription">Créer un compte</a></p>
     </div>
 </section>

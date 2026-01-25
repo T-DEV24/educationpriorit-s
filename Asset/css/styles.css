@@ -265,6 +265,24 @@ h1,h2,h3,.headline{
 }
 .card-actions{ display:flex; gap: 0.6rem; flex-wrap: wrap; }
 
+.card-media{
+  background: #f1f3f8;
+  border-radius: var(--radius-md);
+  padding: 1.2rem;
+  text-align: center;
+  font-weight: 700;
+  color: #5a6473;
+  border: 1px dashed var(--border);
+}
+
+.card-media .media-caption{
+  display:block;
+  font-size: 0.85rem;
+  color: #798291;
+  margin-top: 0.35rem;
+  font-weight: 500;
+}
+
 .info-card{
   background: var(--card);
   border: 1px solid var(--border);

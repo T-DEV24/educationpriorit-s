@@ -137,3 +137,28 @@ CREATE TABLE media (
 );
 
 INSERT INTO roles (name) VALUES ('Admin'), ('Rédacteur');
+
+-- Base categories (rubriques)
+INSERT INTO categories (name, slug) VALUES
+  ('Actualité', 'actualite'),
+  ('Campus', 'campus'),
+  ('Focus / Dossiers', 'focus-dossiers'),
+  ('Zoom', 'zoom'),
+  ('Reportages', 'reportages'),
+  ('Enquêtes', 'enquetes'),
+  ('Interviews', 'interviews');
+
+-- Base tags
+INSERT INTO tags (name, slug) VALUES
+  ('Éducation', 'education'),
+  ('Innovation', 'innovation'),
+  ('Vie scolaire', 'vie-scolaire');
+
+-- Base pages
+INSERT INTO pages (title, slug, content, is_published) VALUES
+  ('À propos', 'about', 'Page de présentation du Journal Éducatif.', 1),
+  ('Contact', 'contact', 'Page de contact et informations utiles.', 1);
+
+-- Placeholder media
+INSERT INTO media (file_path, alt_text) VALUES
+  ('uploads/placeholder.jpg', 'Visuel par défaut');

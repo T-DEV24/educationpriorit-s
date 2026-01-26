@@ -79,6 +79,37 @@ function renderArticle(article) {
     articleLike.dataset.articleId = article.id ?? '';
     const likesCount = article.likes_count ?? 0;
     articleLike.textContent = `J'aime (${likesCount})`;
+
+    const description = article.summary || (article.content ? article.content.replace(/<[^>]+>/g, '').slice(0, 160) : '');
+    const title = article.title ? `${article.title} | EducationPriorité` : 'EducationPriorité';
+    document.title = title;
+    const descriptionMeta = document.getElementById('meta-description');
+    if (descriptionMeta && description) {
+        descriptionMeta.setAttribute('content', description);
+    }
+    const ogTitle = document.getElementById('meta-og-title');
+    if (ogTitle && title) {
+        ogTitle.setAttribute('content', title);
+    }
+    const ogDescription = document.getElementById('meta-og-description');
+    if (ogDescription && description) {
+        ogDescription.setAttribute('content', description);
+    }
+    const ogType = document.getElementById('meta-og-type');
+    if (ogType) {
+        ogType.setAttribute('content', 'article');
+    }
+    const ogUrl = document.getElementById('meta-og-url');
+    if (ogUrl) {
+        ogUrl.setAttribute('content', window.location.href);
+    }
+    const ogImage = document.getElementById('meta-og-image');
+    if (ogImage && article.image_path) {
+        const absoluteImage = article.image_path.startsWith('http')
+            ? article.image_path
+            : `${window.location.origin}/${article.image_path.replace(/^\\//, '')}`;
+        ogImage.setAttribute('content', absoluteImage);
+    }
 }
 
 function loadArticleBySlug(slug) {

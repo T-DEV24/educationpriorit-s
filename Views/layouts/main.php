@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= isset($title) ? htmlspecialchars($title) . ' | ' : '' ?>EducationPriorité</title>
-    <meta name="description" content="EducationPriorité : journal d'information éducative, articles, dossiers et boutique PDF.">
+    <meta name="description" content="EducationPriorité : journal d'information éducative, articles, dossiers et boutique PDF." id="meta-description">
+    <meta property="og:title" content="<?= isset($title) ? htmlspecialchars($title) . ' | ' : 'EducationPriorité' ?>EducationPriorité" id="meta-og-title">
+    <meta property="og:description" content="EducationPriorité : journal d'information éducative, articles, dossiers et boutique PDF." id="meta-og-description">
+    <meta property="og:type" content="website" id="meta-og-type">
+    <meta property="og:url" content="<?= htmlspecialchars((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ($_SERVER['REQUEST_URI'] ?? '/')) ?>" id="meta-og-url">
+    <meta property="og:image" content="<?= htmlspecialchars((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/Asset/logo.svg') ?>" id="meta-og-image">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/Asset/css/styles.css">
 </head>

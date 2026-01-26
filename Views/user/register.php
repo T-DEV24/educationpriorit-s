@@ -35,7 +35,7 @@ const registerAlert = document.getElementById('register-alert');
 registerForm.addEventListener('submit', event => {
     event.preventDefault();
     registerAlert.classList.add('d-none');
-    fetch('/api/auth/register', {
+    window.apiFetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
@@ -45,14 +45,10 @@ registerForm.addEventListener('submit', event => {
             password: registerPassword.value,
         }),
     })
-        .then(async response => {
-            const payload = await response.json();
-            if (!response.ok) {
-                throw new Error(payload.error || 'Impossible de créer le compte.');
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de créer le compte.'));
             }
-            return payload;
-        })
-        .then(() => {
             window.location.href = '/profil';
         })
         .catch(error => {

@@ -75,18 +75,15 @@ function loadOrders() {
         page: String(ordersCurrentPage),
         limit: '6',
     });
-    fetch(`/api/orders?${params.toString()}`, { credentials: 'same-origin' })
-        .then(async response => {
-            const payload = await response.json();
-            if (!response.ok) {
-                throw new Error(payload.error || 'Impossible de charger les commandes.');
+    window.apiFetch(`/api/orders?${params.toString()}`, { credentials: 'same-origin' })
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les commandes.'));
             }
-            return payload;
-        })
-        .then(payload => {
-            const orders = payload.data ?? [];
-            ordersLastPage = payload.pagination?.pages ?? 1;
-            ordersPage.textContent = `Page ${payload.pagination?.page ?? ordersCurrentPage} / ${ordersLastPage}`;
+            const orders = payload.data?.data ?? payload.data ?? [];
+            const pagination = payload.data?.pagination ?? payload.pagination ?? {};
+            ordersLastPage = pagination.pages ?? 1;
+            ordersPage.textContent = `Page ${pagination.page ?? ordersCurrentPage} / ${ordersLastPage}`;
             ordersGrid.innerHTML = '';
             if (orders.length === 0) {
                 ordersGrid.innerHTML = '<p class="muted">Aucune commande trouvée.</p>';
@@ -104,16 +101,12 @@ function loadOrders() {
 
 function loadDownloads() {
     const params = new URLSearchParams({ mine: '1', limit: '10' });
-    fetch(`/api/downloads?${params.toString()}`, { credentials: 'same-origin' })
-        .then(async response => {
-            const payload = await response.json();
-            if (!response.ok) {
-                throw new Error(payload.error || 'Impossible de charger les téléchargements.');
+    window.apiFetch(`/api/downloads?${params.toString()}`, { credentials: 'same-origin' })
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les téléchargements.'));
             }
-            return payload;
-        })
-        .then(payload => {
-            const downloads = payload.data ?? [];
+            const downloads = payload.data?.data ?? payload.data ?? [];
             downloadsList.innerHTML = '';
             if (downloads.length === 0) {
                 downloadsList.innerHTML = '<li class="muted">Aucun téléchargement enregistré.</li>';

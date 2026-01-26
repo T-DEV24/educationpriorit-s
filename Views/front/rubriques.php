@@ -23,15 +23,12 @@ function renderRubrique(category) {
 
 function loadRubriques() {
     rubriquesAlert.classList.add('d-none');
-    fetch('/api/categories?limit=50&with_counts=1')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Impossible de charger les rubriques.');
+    window.apiFetch('/api/categories?limit=50&with_counts=1')
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les rubriques.'));
             }
-            return response.json();
-        })
-        .then(payload => {
-            const categories = payload.data ?? [];
+            const categories = payload.data?.data ?? payload.data ?? [];
             rubriquesGrid.innerHTML = '';
             if (categories.length === 0) {
                 rubriquesGrid.innerHTML = '<p class="muted">Aucune rubrique disponible.</p>';

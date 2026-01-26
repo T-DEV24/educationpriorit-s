@@ -67,17 +67,15 @@ function loadRubriqueArticles() {
         limit: '6',
         category: rubriqueSlug,
     });
-    fetch(`/api/articles?${params.toString()}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Impossible de charger les articles.');
+    window.apiFetch(`/api/articles?${params.toString()}`)
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les articles.'));
             }
-            return response.json();
-        })
-        .then(payload => {
-            const articles = payload.data ?? [];
-            rubriqueLastPage = payload.pagination?.pages ?? 1;
-            rubriquePage.textContent = `Page ${payload.pagination?.page ?? rubriqueCurrentPage} / ${rubriqueLastPage}`;
+            const articles = payload.data?.data ?? payload.data ?? [];
+            const pagination = payload.data?.pagination ?? payload.pagination ?? {};
+            rubriqueLastPage = pagination.pages ?? 1;
+            rubriquePage.textContent = `Page ${pagination.page ?? rubriqueCurrentPage} / ${rubriqueLastPage}`;
             rubriqueGrid.innerHTML = '';
             if (articles.length === 0) {
                 rubriqueGrid.innerHTML = '<p class="muted">Aucun article dans cette rubrique.</p>';
@@ -97,10 +95,9 @@ function loadRubriqueInfo() {
     if (!rubriqueSlug) {
         return;
     }
-    fetch(`/api/categories?slug=${encodeURIComponent(rubriqueSlug)}`)
-        .then(response => response.json())
-        .then(payload => {
-            rubriqueCategory = payload.data ?? null;
+    window.apiFetch(`/api/categories?slug=${encodeURIComponent(rubriqueSlug)}`)
+        .then((payload) => {
+            rubriqueCategory = payload.data?.data ?? payload.data ?? null;
             if (rubriqueCategory?.name) {
                 rubriqueTitle.textContent = rubriqueCategory.name;
             }
@@ -117,22 +114,21 @@ rubriqueGrid.addEventListener('click', event => {
     if (!articleId) {
         return;
     }
-    fetch('/api/likes', {
+    window.apiFetch('/api/likes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ article_id: Number(articleId) }),
         credentials: 'same-origin',
     })
-        .then(response => {
-            if (!response.ok && response.status !== 409) {
-                throw new Error('Impossible d\'ajouter le like.');
+        .then((payload) => {
+            if (!payload.ok && payload.status !== 409) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible d\'ajouter le like.'));
             }
-            return response.json();
+            return window.apiFetch(`/api/likes?article_id=${articleId}`, { credentials: 'same-origin' });
         })
-        .then(() => fetch(`/api/likes?article_id=${articleId}`))
-        .then(response => response.json())
-        .then(payload => {
-            const count = payload.data?.count ?? 0;
+        .then((payload) => {
+            const data = payload.data?.data ?? payload.data ?? {};
+            const count = data.count ?? 0;
             target.textContent = `Like (${count})`;
         })
         .catch(() => {

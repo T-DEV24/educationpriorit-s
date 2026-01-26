@@ -27,7 +27,7 @@ const loginAlert = document.getElementById('login-alert');
 loginForm.addEventListener('submit', event => {
     event.preventDefault();
     loginAlert.classList.add('d-none');
-    fetch('/api/auth/login', {
+    window.apiFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
@@ -36,14 +36,10 @@ loginForm.addEventListener('submit', event => {
             password: loginPassword.value,
         }),
     })
-        .then(async response => {
-            const payload = await response.json();
-            if (!response.ok) {
-                throw new Error(payload.error || 'Impossible de se connecter.');
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de se connecter.'));
             }
-            return payload;
-        })
-        .then(() => {
             window.location.href = '/profil';
         })
         .catch(error => {

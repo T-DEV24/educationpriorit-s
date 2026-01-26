@@ -28,7 +28,7 @@ passwordForm.addEventListener('submit', event => {
     event.preventDefault();
     passwordAlert.classList.add('d-none');
     passwordSuccess.classList.add('d-none');
-    fetch('/api/auth/password', {
+    window.apiFetch('/api/auth/password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
@@ -37,14 +37,10 @@ passwordForm.addEventListener('submit', event => {
             new_password: passwordNew.value,
         }),
     })
-        .then(async response => {
-            const payload = await response.json();
-            if (!response.ok) {
-                throw new Error(payload.error || 'Impossible de mettre à jour le mot de passe.');
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de mettre à jour le mot de passe.'));
             }
-            return payload;
-        })
-        .then(() => {
             passwordCurrent.value = '';
             passwordNew.value = '';
             passwordSuccess.textContent = 'Mot de passe mis à jour.';

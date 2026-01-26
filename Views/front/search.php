@@ -63,17 +63,15 @@ function loadSearchResults() {
         limit: '9',
         search: query,
     });
-    fetch(`/api/articles?${params.toString()}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Impossible de charger les résultats.');
+    window.apiFetch(`/api/articles?${params.toString()}`)
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les résultats.'));
             }
-            return response.json();
-        })
-        .then(payload => {
-            const articles = payload.data ?? [];
-            searchLastPage = payload.pagination?.pages ?? 1;
-            searchPage.textContent = `Page ${payload.pagination?.page ?? searchCurrentPage} / ${searchLastPage}`;
+            const articles = payload.data?.data ?? payload.data ?? [];
+            const pagination = payload.data?.pagination ?? payload.pagination ?? {};
+            searchLastPage = pagination.pages ?? 1;
+            searchPage.textContent = `Page ${pagination.page ?? searchCurrentPage} / ${searchLastPage}`;
             searchResults.innerHTML = '';
             if (articles.length === 0) {
                 searchResults.innerHTML = '<p class="muted">Aucun résultat pour cette recherche.</p>';

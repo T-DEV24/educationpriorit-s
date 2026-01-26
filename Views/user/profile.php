@@ -29,15 +29,14 @@ const profileLogout = document.getElementById('profile-logout');
 
 function loadProfile() {
     profileAlert.classList.add('d-none');
-    fetch('/api/users?me=1', { credentials: 'same-origin' })
-        .then(async response => {
-            const payload = await response.json();
-            if (!response.ok) {
-                throw new Error(payload.error || 'Impossible de charger le profil.');
+    window.apiFetch('/api/users?me=1', { credentials: 'same-origin' })
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger le profil.'));
             }
-            return payload.data;
+            return payload.data?.data ?? payload.data;
         })
-        .then(user => {
+        .then((user) => {
             profileName.textContent = `Nom : ${user.full_name ?? '-'}`;
             profileEmail.textContent = `Email : ${user.email ?? '-'}`;
             profileStatus.textContent = `Statut : ${(user.is_active ?? 0) === 1 ? 'Compte activé' : 'Compte désactivé'}`;
@@ -49,7 +48,7 @@ function loadProfile() {
 }
 
 profileLogout.addEventListener('click', () => {
-    fetch('/api/auth/logout', {
+    window.apiFetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'same-origin',
     })

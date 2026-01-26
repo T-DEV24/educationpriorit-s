@@ -198,34 +198,36 @@
     };
 
     const loadCategories = () =>
-        fetch('/api/categories?limit=100', { credentials: 'same-origin' })
-            .then((response) => response.json())
+        window.apiFetch('/api/categories?limit=100', { credentials: 'same-origin' })
             .then((payload) => {
-                categories = payload.data ?? [];
+                if (!payload.ok) {
+                    throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les rubriques.'));
+                }
+                categories = payload.data?.data ?? payload.data ?? [];
                 renderCategories();
             });
 
     const loadTags = () =>
-        fetch('/api/tags?limit=100', { credentials: 'same-origin' })
-            .then((response) => response.json())
+        window.apiFetch('/api/tags?limit=100', { credentials: 'same-origin' })
             .then((payload) => {
-                tags = payload.data ?? [];
+                if (!payload.ok) {
+                    throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les tags.'));
+                }
+                tags = payload.data?.data ?? payload.data ?? [];
                 renderTags();
             });
 
     const loadArticles = () => {
         articleAlert.classList.add('d-none');
-        fetch(`/api/admin/articles?page=${articleCurrentPage}&limit=10`, { credentials: 'same-origin' })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Impossible de charger les articles.');
-                }
-                return response.json();
-            })
+        window.apiFetch(`/api/admin/articles?page=${articleCurrentPage}&limit=10`, { credentials: 'same-origin' })
             .then((payload) => {
-                articleRows = payload.data ?? [];
-                articleLastPage = payload.pagination?.pages ?? 1;
-                articlePage.textContent = `Page ${payload.pagination?.page ?? articleCurrentPage} / ${articleLastPage}`;
+                if (!payload.ok) {
+                    throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les articles.'));
+                }
+                articleRows = payload.data?.data ?? payload.data ?? [];
+                const pagination = payload.data?.pagination ?? payload.pagination ?? {};
+                articleLastPage = pagination.pages ?? 1;
+                articlePage.textContent = `Page ${pagination.page ?? articleCurrentPage} / ${articleLastPage}`;
                 renderArticles(articleRows);
             })
             .catch((error) => {
@@ -235,14 +237,13 @@
     };
 
     const loadArticleDetail = (id) =>
-        fetch(`/api/admin/articles/${id}`, { credentials: 'same-origin' })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Impossible de charger l’article.');
+        window.apiFetch(`/api/admin/articles/${id}`, { credentials: 'same-origin' })
+            .then((payload) => {
+                if (!payload.ok) {
+                    throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger l’article.'));
                 }
-                return response.json();
-            })
-            .then((payload) => payload.data ?? null);
+                return payload.data?.data ?? payload.data ?? null;
+            });
 
     articleCreate.addEventListener('click', () => {
         resetForm();
@@ -326,20 +327,16 @@
         const method = id ? 'PATCH' : 'POST';
         const endpoint = id ? `/api/admin/articles/${id}` : '/api/admin/articles';
 
-        fetch(endpoint, {
+        window.apiFetch(endpoint, {
             method,
             headers: { 'Content-Type': 'application/json' },
             credentials: 'same-origin',
             body: JSON.stringify(payload),
         })
-            .then(async (response) => {
-                const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(data.error || 'Impossible d’enregistrer l’article.');
+            .then((payload) => {
+                if (!payload.ok) {
+                    throw new Error(window.getApiErrorMessage(payload, 'Impossible d’enregistrer l’article.'));
                 }
-                return data;
-            })
-            .then(() => {
                 articleFormSuccess.textContent = 'Article enregistré.';
                 articleFormSuccess.classList.remove('d-none');
                 loadArticles();
@@ -374,11 +371,11 @@
     const uploadMedia = (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        return fetch('/api/media/upload', {
+        return window.apiFetch('/api/media/upload', {
             method: 'POST',
             credentials: 'same-origin',
             body: formData,
-        }).then((response) => response.json());
+        });
     };
 
     articleImageInput.addEventListener('change', () => {
@@ -388,10 +385,10 @@
         }
         uploadMedia(file)
             .then((payload) => {
-                if (payload.error) {
-                    throw new Error(payload.error);
+                if (!payload.ok) {
+                    throw new Error(window.getApiErrorMessage(payload, 'Impossible de téléverser l’image.'));
                 }
-                articleImagePath = payload.data?.file_path ?? '';
+                articleImagePath = payload.data?.data?.file_path ?? payload.data?.file_path ?? '';
                 articleImageInfo.textContent = articleImagePath ? `Image enregistrée : ${articleImagePath}` : '';
             })
             .catch((error) => {
@@ -407,10 +404,10 @@
         }
         uploadMedia(file)
             .then((payload) => {
-                if (payload.error) {
-                    throw new Error(payload.error);
+                if (!payload.ok) {
+                    throw new Error(window.getApiErrorMessage(payload, 'Impossible de téléverser le PDF.'));
                 }
-                const filePath = payload.data?.file_path ?? '';
+                const filePath = payload.data?.data?.file_path ?? payload.data?.file_path ?? '';
                 if (filePath) {
                     articleEditor.innerHTML += `<p><a href="/${filePath}" target="_blank">Télécharger le PDF</a></p>`;
                 }

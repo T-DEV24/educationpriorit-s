@@ -113,30 +113,33 @@ function renderArticle(article) {
 }
 
 function loadArticleBySlug(slug) {
-    return fetch(`/api/articles?slug=${encodeURIComponent(slug)}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Article introuvable.');
+    return window.apiFetch(`/api/articles?slug=${encodeURIComponent(slug)}`)
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Article introuvable.'));
             }
-            return response.json();
-        })
-        .then(payload => payload.data);
+            return payload.data?.data ?? payload.data;
+        });
 }
 
 function loadFallbackArticle() {
-    return fetch('/api/articles?limit=1')
-        .then(response => response.json())
-        .then(payload => payload.data?.[0] ?? null);
+    return window.apiFetch('/api/articles?limit=1')
+        .then((payload) => {
+            if (!payload.ok) {
+                return null;
+            }
+            const data = payload.data?.data ?? payload.data ?? [];
+            return data[0] ?? null;
+        });
 }
 
 function loadLikeStatus(articleId) {
     if (!articleId) {
         return;
     }
-    fetch(`/api/likes?article_id=${articleId}`, { credentials: 'same-origin' })
-        .then(response => response.json())
-        .then(payload => {
-            const data = payload.data ?? {};
+    window.apiFetch(`/api/likes?article_id=${articleId}`, { credentials: 'same-origin' })
+        .then((payload) => {
+            const data = payload.data?.data ?? payload.data ?? {};
             articleLike.textContent = `J'aime (${data.count ?? 0})`;
             if (data.liked) {
                 articleLike.classList.add('btn-primary');
@@ -177,17 +180,15 @@ function loadComments() {
         page: String(commentCurrentPage),
         limit: '5',
     });
-    fetch(`/api/comments?${params.toString()}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Impossible de charger les commentaires.');
+    window.apiFetch(`/api/comments?${params.toString()}`)
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les commentaires.'));
             }
-            return response.json();
-        })
-        .then(payload => {
-            const comments = payload.data ?? [];
-            commentLastPage = payload.pagination?.pages ?? 1;
-            commentPage.textContent = `Page ${payload.pagination?.page ?? commentCurrentPage} / ${commentLastPage}`;
+            const comments = payload.data?.data ?? payload.data ?? [];
+            const pagination = payload.data?.pagination ?? payload.pagination ?? {};
+            commentLastPage = pagination.pages ?? 1;
+            commentPage.textContent = `Page ${pagination.page ?? commentCurrentPage} / ${commentLastPage}`;
             renderComments(comments);
             commentPrev.disabled = commentCurrentPage <= 1;
             commentNext.disabled = commentCurrentPage >= commentLastPage;
@@ -203,17 +204,16 @@ articleLike.addEventListener('click', () => {
     if (!articleId) {
         return;
     }
-    fetch('/api/likes', {
+    window.apiFetch('/api/likes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ article_id: Number(articleId) }),
         credentials: 'same-origin',
     })
-        .then(response => {
-            if (!response.ok && response.status !== 409) {
-                throw new Error('Impossible de liker.');
+        .then((payload) => {
+            if (!payload.ok && payload.status !== 409) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de liker.'));
             }
-            return response.json();
         })
         .then(() => loadLikeStatus(articleId))
         .catch(() => {
@@ -227,17 +227,16 @@ commentSubmit.addEventListener('click', () => {
         return;
     }
     commentAlert.classList.add('d-none');
-    fetch('/api/comments', {
+    window.apiFetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ article_id: Number(articleData.id), content }),
         credentials: 'same-origin',
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Connexion requise pour commenter.');
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Connexion requise pour commenter.'));
             }
-            return response.json();
         })
         .then(() => {
             commentContent.value = '';

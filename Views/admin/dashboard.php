@@ -48,15 +48,12 @@
         alertBox.classList.remove('d-none');
     };
 
-    fetch('/api/admin/dashboard', { credentials: 'same-origin' })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error('Impossible de charger les indicateurs admin.');
-            }
-            return response.json();
-        })
+    window.apiFetch('/api/admin/dashboard', { credentials: 'same-origin' })
         .then((payload) => {
-            updateCounts(payload.data ?? {});
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les indicateurs admin.'));
+            }
+            updateCounts(payload.data?.data ?? payload.data ?? {});
         })
         .catch((error) => {
             showError(error.message);

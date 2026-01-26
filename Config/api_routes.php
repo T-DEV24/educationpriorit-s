@@ -20,6 +20,12 @@ require_once __DIR__ . '/../Controllers/AdminArticleController.php';
 require_once __DIR__ . '/../Controllers/AdminUserController.php';
 require_once __DIR__ . '/../Controllers/AdminCommentController.php';
 require_once __DIR__ . '/../Controllers/AdminPdfController.php';
+require_once __DIR__ . '/../Controllers/AdminCategoryController.php';
+require_once __DIR__ . '/../Controllers/AdminTagController.php';
+require_once __DIR__ . '/../Controllers/AdminPageController.php';
+require_once __DIR__ . '/../Controllers/AdminMediaController.php';
+require_once __DIR__ . '/../Controllers/AdminOrderController.php';
+require_once __DIR__ . '/../Controllers/AdminStatsController.php';
 
 const API_RESOURCE_CONTROLLERS = [
     'users' => UsersController::class,
@@ -141,6 +147,12 @@ function dispatch_api_request(string $uri, string $method): void
         $adminControllers = [
             'dashboard' => AdminDashboardController::class,
             'articles' => AdminArticleController::class,
+            'categories' => AdminCategoryController::class,
+            'tags' => AdminTagController::class,
+            'pages' => AdminPageController::class,
+            'media' => AdminMediaController::class,
+            'orders' => AdminOrderController::class,
+            'stats' => AdminStatsController::class,
             'users' => AdminUserController::class,
             'comments' => AdminCommentController::class,
             'pdf-editions' => AdminPdfController::class,

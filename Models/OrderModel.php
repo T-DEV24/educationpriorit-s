@@ -72,4 +72,47 @@ class OrderModel extends BaseModel
             ],
         ];
     }
+
+    public function findAdminPaginated(int $page = 1, int $limit = 20): array
+    {
+        $page = max(1, $page);
+        $limit = max(1, min(100, $limit));
+        $offset = ($page - 1) * $limit;
+
+        $countSql = sprintf('SELECT COUNT(*) FROM %s', $this->table);
+        $total = (int) $this->db->query($countSql)->fetchColumn();
+
+        $sql = sprintf(
+            'SELECT orders.*,
+                users.full_name AS user_name,
+                users.email AS user_email,
+                pdf_editions.title AS pdf_title,
+                payments.provider AS payment_provider,
+                payments.status AS payment_status,
+                payments.transaction_ref AS transaction_ref
+            FROM %s AS orders
+            LEFT JOIN users ON users.id = orders.user_id
+            LEFT JOIN pdf_editions ON pdf_editions.id = orders.pdf_edition_id
+            LEFT JOIN payments ON payments.order_id = orders.id
+            ORDER BY orders.created_at DESC
+            LIMIT :limit OFFSET :offset',
+            $this->table
+        );
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $items = $stmt->fetchAll();
+
+        return [
+            'items' => $items,
+            'pagination' => [
+                'page' => $page,
+                'limit' => $limit,
+                'total' => $total,
+                'pages' => (int) ceil($total / $limit),
+            ],
+        ];
+    }
 }

@@ -24,3 +24,58 @@ if (scrollButton) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 }
+
+window.apiFetch = async (url, options = {}) => {
+  const token = localStorage.getItem('auth_token');
+  const mergedOptions = { ...options };
+  mergedOptions.headers = { ...(options.headers || {}) };
+  if (token && !mergedOptions.headers.Authorization) {
+    mergedOptions.headers.Authorization = `Bearer ${token}`;
+  }
+  const response = await fetch(url, mergedOptions);
+  const contentType = response.headers.get('content-type') || '';
+  let data = null;
+  let text = null;
+
+  if (contentType.includes('application/json')) {
+    try {
+      data = await response.json();
+    } catch (error) {
+      data = null;
+    }
+  } else {
+    try {
+      text = await response.text();
+    } catch (error) {
+      text = null;
+    }
+  }
+
+  return { ok: response.ok, status: response.status, data, text };
+};
+
+window.getApiErrorMessage = (payload, fallback = 'Une erreur est survenue.') => {
+  if (!payload) {
+    return fallback;
+  }
+  if (payload.data && payload.data.error) {
+    return payload.data.error;
+  }
+  if (payload.data && payload.data.message) {
+    return payload.data.message;
+  }
+  if (payload.text && payload.text.trim()) {
+    return 'Une erreur est survenue. Merci de réessayer.';
+  }
+  return fallback;
+};
+
+window.storeAuthToken = (token) => {
+  if (token) {
+    localStorage.setItem('auth_token', token);
+  }
+};
+
+window.clearAuthToken = () => {
+  localStorage.removeItem('auth_token');
+};

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../Config/database.php';
+require_once __DIR__ . '/../Config/auth.php';
 
 class AdminDashboardController extends BaseController
 {
     public function index(): void
     {
-        if (! $this->isAdmin()) {
+        if (! AuthSession::isAdmin()) {
             $this->json(['error' => 'Accès administrateur requis.'], 403);
             return;
         }
@@ -33,12 +34,4 @@ class AdminDashboardController extends BaseController
         $this->json(['data' => $counts]);
     }
 
-    private function isAdmin(): bool
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        return (int) ($_SESSION['role_id'] ?? 0) === 1;
-    }
 }

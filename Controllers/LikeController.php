@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../Models/LikeModel.php';
+require_once __DIR__ . '/../Config/auth.php';
 
 class LikeController extends BaseController
 {
@@ -14,7 +15,9 @@ class LikeController extends BaseController
 
     public function store(): void
     {
-        $userId = $this->requireUserId();
+        $userId = AuthSession::requireUserId(function (): void {
+            $this->json(['error' => 'Connexion requise.'], 401);
+        });
         if ($userId === null) {
             return;
         }
@@ -45,18 +48,4 @@ class LikeController extends BaseController
         $this->json(['data' => $created], 201);
     }
 
-    private function requireUserId(): ?int
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $userId = (int) ($_SESSION['user_id'] ?? 0);
-        if ($userId <= 0) {
-            $this->json(['error' => 'Connexion requise.'], 401);
-            return null;
-        }
-
-        return $userId;
-    }
 }

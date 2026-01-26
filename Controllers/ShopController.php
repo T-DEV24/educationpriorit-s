@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../Models/PdfEditionModel.php';
 require_once __DIR__ . '/../Models/OrderModel.php';
 require_once __DIR__ . '/../Models/DownloadModel.php';
+require_once __DIR__ . '/../Config/auth.php';
 
 class ShopController
 {
@@ -30,7 +31,9 @@ class ShopController
 
     public function purchase(): void
     {
-        $userId = $this->requireUserId();
+        $userId = AuthSession::requireUserId(function (): void {
+            $this->json(['error' => 'Connexion requise.'], 401);
+        });
         if ($userId === null) {
             return;
         }
@@ -79,7 +82,9 @@ class ShopController
 
     public function verify(int $pdfId): void
     {
-        $userId = $this->requireUserId();
+        $userId = AuthSession::requireUserId(function (): void {
+            $this->json(['error' => 'Connexion requise.'], 401);
+        });
         if ($userId === null) {
             return;
         }
@@ -103,7 +108,9 @@ class ShopController
 
     public function download(int $pdfId): void
     {
-        $userId = $this->requireUserId();
+        $userId = AuthSession::requireUserId(function (): void {
+            $this->json(['error' => 'Connexion requise.'], 401);
+        });
         if ($userId === null) {
             return;
         }
@@ -153,21 +160,6 @@ class ShopController
         }
 
         return $real;
-    }
-
-    private function requireUserId(): ?int
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $userId = (int) ($_SESSION['user_id'] ?? 0);
-        if ($userId <= 0) {
-            $this->json(['error' => 'Connexion requise.'], 401);
-            return null;
-        }
-
-        return $userId;
     }
 
     private function getRequestData(): array

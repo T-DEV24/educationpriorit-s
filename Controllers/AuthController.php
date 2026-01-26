@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../Models/UserModel.php';
+require_once __DIR__ . '/../Config/auth.php';
 
 class AuthController
 {
@@ -35,12 +36,11 @@ class AuthController
             return;
         }
 
-        $hash = password_hash($password, PASSWORD_DEFAULT);
         $data = [
-            'role_id' => (int) ($payload['role_id'] ?? 2),
+            'role_id' => 2,
             'full_name' => $fullName,
             'email' => $email,
-            'password_hash' => $hash,
+            'password_hash' => password_hash($password, PASSWORD_DEFAULT),
             'is_active' => 1,
         ];
 
@@ -50,10 +50,7 @@ class AuthController
             return;
         }
 
-        $this->startSession();
-        $_SESSION['user_id'] = $created['id'] ?? null;
-        $_SESSION['user_email'] = $created['email'] ?? $email;
-        $_SESSION['user_name'] = $created['full_name'] ?? $fullName;
+        AuthSession::setUser($created);
 
         $this->json(['data' => $created], 201);
     }
@@ -80,42 +77,16 @@ class AuthController
             return;
         }
 
-        $this->startSession();
-        $_SESSION['user_id'] = $user['id'] ?? null;
-        $_SESSION['user_email'] = $user['email'] ?? $email;
-        $_SESSION['user_name'] = $user['full_name'] ?? '';
+        AuthSession::setUser($user);
 
         $this->json(['message' => 'Connexion réussie.', 'data' => $user]);
     }
 
     public function logout(): void
     {
-        $this->startSession();
-        $_SESSION = [];
-
-        if (ini_get('session.use_cookies')) {
-            $params = session_get_cookie_params();
-            setcookie(
-                session_name(),
-                '',
-                time() - 42000,
-                $params['path'] ?? '/',
-                $params['domain'] ?? '',
-                (bool) ($params['secure'] ?? false),
-                (bool) ($params['httponly'] ?? true)
-            );
-        }
-
-        session_destroy();
+        AuthSession::logout();
 
         $this->json(['message' => 'Déconnexion réussie.']);
-    }
-
-    private function startSession(): void
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
     }
 
     private function getRequestData(): array

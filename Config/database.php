@@ -13,12 +13,19 @@ class Database
         }
 
         $host = getenv('DB_HOST') ?: 'localhost';
+        $port = getenv('DB_PORT') ?: '';
         $name = getenv('DB_NAME') ?: 'educationpriorite';
         $user = getenv('DB_USER') ?: 'root';
         $pass = getenv('DB_PASS') ?: '';
         $charset = getenv('DB_CHARSET') ?: 'utf8mb4';
 
-        $dsn = sprintf('mysql:host=%s;dbname=%s;charset=%s', $host, $name, $charset);
+        $dsn = sprintf(
+            'mysql:host=%s%s;dbname=%s;charset=%s',
+            $host,
+            $port !== '' ? ';port=' . $port : '',
+            $name,
+            $charset
+        );
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

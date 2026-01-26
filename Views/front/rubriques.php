@@ -2,14 +2,47 @@
     <div class="container">
         <h1>Rubriques</h1>
         <p>Parcourez les catégories du journal et découvrez les articles associés.</p>
-        <div class="pill-grid">
-            <a class="pill" href="/rubriques/actualite">Actualité</a>
-            <a class="pill" href="/rubriques/campus">Campus</a>
-            <a class="pill" href="/rubriques/focus">Focus / Dossiers</a>
-            <a class="pill" href="/rubriques/zoom">Zoom</a>
-            <a class="pill" href="/rubriques/reportages">Reportages</a>
-            <a class="pill" href="/rubriques/enquetes">Enquêtes</a>
-            <a class="pill" href="/rubriques/interviews">Interviews</a>
-        </div>
+        <div class="alert alert-danger d-none" id="rubriques-alert" role="alert"></div>
+        <div class="pill-grid" id="rubriques-grid"></div>
     </div>
 </section>
+
+<script>
+const rubriquesGrid = document.getElementById('rubriques-grid');
+const rubriquesAlert = document.getElementById('rubriques-alert');
+
+function renderRubrique(category) {
+    const link = document.createElement('a');
+    link.className = 'pill';
+    link.href = `/rubriques/${category.slug ?? ''}`;
+    const name = category.name ?? 'Rubrique';
+    const count = category.article_count;
+    link.textContent = Number.isInteger(count) ? `${name} (${count})` : name;
+    return link;
+}
+
+function loadRubriques() {
+    rubriquesAlert.classList.add('d-none');
+    window.apiFetch('/api/categories?limit=50&with_counts=1')
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les rubriques.'));
+            }
+            const categories = payload.data?.data ?? payload.data ?? [];
+            rubriquesGrid.innerHTML = '';
+            if (categories.length === 0) {
+                rubriquesGrid.innerHTML = '<p class="muted">Aucune rubrique disponible.</p>';
+                return;
+            }
+            categories.forEach(category => {
+                rubriquesGrid.appendChild(renderRubrique(category));
+            });
+        })
+        .catch(error => {
+            rubriquesAlert.textContent = error.message;
+            rubriquesAlert.classList.remove('d-none');
+        });
+}
+
+loadRubriques();
+</script>

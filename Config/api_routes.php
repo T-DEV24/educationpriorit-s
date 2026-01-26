@@ -7,6 +7,7 @@ require_once __DIR__ . '/../Controllers/ArticleController.php';
 require_once __DIR__ . '/../Controllers/CategoryController.php';
 require_once __DIR__ . '/../Controllers/CommentController.php';
 require_once __DIR__ . '/../Controllers/LikeController.php';
+require_once __DIR__ . '/../Controllers/TagController.php';
 require_once __DIR__ . '/../Controllers/PdfEditionsController.php';
 require_once __DIR__ . '/../Controllers/OrdersController.php';
 require_once __DIR__ . '/../Controllers/DownloadsController.php';
@@ -19,6 +20,12 @@ require_once __DIR__ . '/../Controllers/AdminArticleController.php';
 require_once __DIR__ . '/../Controllers/AdminUserController.php';
 require_once __DIR__ . '/../Controllers/AdminCommentController.php';
 require_once __DIR__ . '/../Controllers/AdminPdfController.php';
+require_once __DIR__ . '/../Controllers/AdminCategoryController.php';
+require_once __DIR__ . '/../Controllers/AdminTagController.php';
+require_once __DIR__ . '/../Controllers/AdminPageController.php';
+require_once __DIR__ . '/../Controllers/AdminMediaController.php';
+require_once __DIR__ . '/../Controllers/AdminOrderController.php';
+require_once __DIR__ . '/../Controllers/AdminStatsController.php';
 
 const API_RESOURCE_CONTROLLERS = [
     'users' => UsersController::class,
@@ -30,6 +37,8 @@ const API_RESOURCE_CONTROLLERS = [
     'comment' => CommentController::class,
     'likes' => LikeController::class,
     'like' => LikeController::class,
+    'tags' => TagController::class,
+    'tag' => TagController::class,
     'pdf-editions' => PdfEditionsController::class,
     'pdf_editions' => PdfEditionsController::class,
     'orders' => OrdersController::class,
@@ -72,9 +81,27 @@ function dispatch_api_request(string $uri, string $method): void
             return;
         }
 
+        if ($action === 'password') {
+            $authController->updatePassword();
+            return;
+        }
+
         http_response_code(404);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['error' => 'Action auth introuvable.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return;
+    }
+
+    if ($resource === 'media' && ($segments[1] ?? '') === 'upload') {
+        $mediaController = new MediaController();
+        if ($method !== 'POST') {
+            http_response_code(405);
+            header('Allow: POST');
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'Méthode non autorisée.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            return;
+        }
+        $mediaController->upload();
         return;
     }
 
@@ -90,6 +117,11 @@ function dispatch_api_request(string $uri, string $method): void
 
         if ($action === 'purchase' && $method === 'POST') {
             $shopController->purchase();
+            return;
+        }
+
+        if ($action === 'confirm' && $method === 'POST') {
+            $shopController->confirm();
             return;
         }
 
@@ -115,6 +147,12 @@ function dispatch_api_request(string $uri, string $method): void
         $adminControllers = [
             'dashboard' => AdminDashboardController::class,
             'articles' => AdminArticleController::class,
+            'categories' => AdminCategoryController::class,
+            'tags' => AdminTagController::class,
+            'pages' => AdminPageController::class,
+            'media' => AdminMediaController::class,
+            'orders' => AdminOrderController::class,
+            'stats' => AdminStatsController::class,
             'users' => AdminUserController::class,
             'comments' => AdminCommentController::class,
             'pdf-editions' => AdminPdfController::class,

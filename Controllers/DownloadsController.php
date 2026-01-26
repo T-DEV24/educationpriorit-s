@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/BaseController.php';
-require_once __DIR__ . '/../Models/Download.php';
+require_once __DIR__ . '/../Models/DownloadModel.php';
 
 class DownloadsController extends BaseController
 {
     public function __construct()
     {
-        $this->model = new Download();
+        $this->model = new DownloadModel();
     }
 }

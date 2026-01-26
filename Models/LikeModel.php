@@ -24,4 +24,14 @@ class LikeModel extends BaseModel
 
         return $result === false ? null : $result;
     }
+
+    public function countByArticle(int $articleId): int
+    {
+        $sql = sprintf('SELECT COUNT(*) FROM %s WHERE article_id = :article_id', $this->table);
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':article_id', $articleId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
 }

@@ -28,6 +28,15 @@
 
 <section class="container section">
     <div class="section-header">
+        <h2 class="headline-md">Rubriques</h2>
+        <a class="link" href="/rubriques">Tout voir</a>
+    </div>
+    <div class="alert alert-danger d-none" id="home-rubriques-alert" role="alert"></div>
+    <div class="pill-grid" id="home-rubriques-grid"></div>
+</section>
+
+<section class="container section">
+    <div class="section-header">
         <h2 class="headline-md">À la une</h2>
         <a class="link" href="/rubriques">Tout voir</a>
     </div>
@@ -65,6 +74,8 @@
 <script>
 const homeGrid = document.getElementById('home-article-grid');
 const homeAlert = document.getElementById('home-article-alert');
+const homeRubriquesGrid = document.getElementById('home-rubriques-grid');
+const homeRubriquesAlert = document.getElementById('home-rubriques-alert');
 
 function formatCard(article) {
     const card = document.createElement('article');
@@ -90,6 +101,39 @@ function formatCard(article) {
     actions.append(link, likeButton);
     card.append(tag, title, summary, actions);
     return card;
+}
+
+function renderRubrique(category) {
+    const link = document.createElement('a');
+    link.className = 'pill';
+    link.href = `/rubriques/${category.slug ?? ''}`;
+    const name = category.name ?? 'Rubrique';
+    const count = category.article_count;
+    link.textContent = Number.isInteger(count) ? `${name} (${count})` : name;
+    return link;
+}
+
+function loadHomeRubriques() {
+    homeRubriquesAlert.classList.add('d-none');
+    window.apiFetch('/api/categories?limit=12&with_counts=1')
+        .then((payload) => {
+            if (!payload.ok) {
+                throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les rubriques.'));
+            }
+            const categories = payload.data?.data ?? payload.data ?? [];
+            homeRubriquesGrid.innerHTML = '';
+            if (categories.length === 0) {
+                homeRubriquesGrid.innerHTML = '<p class="muted">Aucune rubrique disponible.</p>';
+                return;
+            }
+            categories.forEach(category => {
+                homeRubriquesGrid.appendChild(renderRubrique(category));
+            });
+        })
+        .catch(error => {
+            homeRubriquesAlert.textContent = error.message;
+            homeRubriquesAlert.classList.remove('d-none');
+        });
 }
 
 function loadHomeArticles() {
@@ -147,5 +191,6 @@ homeGrid.addEventListener('click', event => {
         });
 });
 
+loadHomeRubriques();
 loadHomeArticles();
 </script>

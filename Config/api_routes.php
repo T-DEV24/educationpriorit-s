@@ -72,6 +72,11 @@ function dispatch_api_request(string $uri, string $method): void
             return;
         }
 
+        if ($action === 'password') {
+            $authController->updatePassword();
+            return;
+        }
+
         http_response_code(404);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['error' => 'Action auth introuvable.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

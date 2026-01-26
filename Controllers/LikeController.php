@@ -13,6 +13,25 @@ class LikeController extends BaseController
         $this->model = new LikeModel();
     }
 
+    public function index(): void
+    {
+        $articleId = filter_input(INPUT_GET, 'article_id', FILTER_VALIDATE_INT) ?: 0;
+        if ($articleId > 0) {
+            $count = $this->model->countByArticle($articleId);
+            AuthSession::start();
+            $userId = (int) ($_SESSION['user_id'] ?? 0);
+            $liked = false;
+            if ($userId > 0) {
+                $liked = $this->model->findByUserAndArticle($userId, $articleId) !== null;
+            }
+
+            $this->json(['data' => ['count' => $count, 'liked' => $liked]]);
+            return;
+        }
+
+        parent::index();
+    }
+
     public function store(): void
     {
         $userId = AuthSession::requireUserId(function (): void {

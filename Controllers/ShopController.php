@@ -5,19 +5,26 @@ declare(strict_types=1);
 require_once __DIR__ . '/../Models/PdfEditionModel.php';
 require_once __DIR__ . '/../Models/OrderModel.php';
 require_once __DIR__ . '/../Models/DownloadModel.php';
+require_once __DIR__ . '/../Models/PaymentModel.php';
+require_once __DIR__ . '/../Models/UserModel.php';
 require_once __DIR__ . '/../Config/auth.php';
+require_once __DIR__ . '/../Config/flutterwave.php';
 
 class ShopController
 {
     private PdfEditionModel $pdfs;
     private OrderModel $orders;
     private DownloadModel $downloads;
+    private PaymentModel $payments;
+    private UserModel $users;
 
     public function __construct()
     {
         $this->pdfs = new PdfEditionModel();
         $this->orders = new OrderModel();
         $this->downloads = new DownloadModel();
+        $this->payments = new PaymentModel();
+        $this->users = new UserModel();
     }
 
     public function listPdf(): void
@@ -63,7 +70,7 @@ class ShopController
             'user_id' => $userId,
             'pdf_edition_id' => $pdfId,
             'amount' => $amount,
-            'status' => 'paid',
+            'status' => 'pending',
         ]);
 
         if ($order === null) {
@@ -71,13 +78,95 @@ class ShopController
             return;
         }
 
-        $this->downloads->create([
-            'user_id' => $userId,
-            'pdf_edition_id' => $pdfId,
-            'downloaded_at' => date('Y-m-d H:i:s'),
+        $user = $this->users->find($userId);
+        $customerEmail = (string) ($user['email'] ?? '');
+        $customerName = (string) ($user['full_name'] ?? 'Client');
+        $txRef = 'ep_' . bin2hex(random_bytes(8));
+
+        $payment = $this->payments->create([
+            'order_id' => (int) ($order['id'] ?? 0),
+            'provider' => 'flutterwave',
+            'transaction_ref' => $txRef,
+            'status' => 'initiated',
         ]);
 
-        $this->json(['message' => 'Achat confirmé.', 'data' => $order], 201);
+        if ($payment === null) {
+            $this->orders->update((int) ($order['id'] ?? 0), ['status' => 'failed']);
+            $this->json(['error' => 'Impossible de préparer le paiement.'], 500);
+            return;
+        }
+
+        $paymentLink = $this->initFlutterwavePayment($txRef, $amount, $customerEmail, $customerName, (string) ($pdf['title'] ?? 'PDF'));
+        if ($paymentLink === null) {
+            $this->orders->update((int) ($order['id'] ?? 0), ['status' => 'failed']);
+            $this->payments->update((int) ($payment['id'] ?? 0), ['status' => 'failed']);
+            $this->json(['error' => 'Impossible de démarrer le paiement.'], 502);
+            return;
+        }
+
+        $this->json([
+            'message' => 'Paiement initialisé.',
+            'data' => [
+                'order' => $order,
+                'payment_link' => $paymentLink,
+                'tx_ref' => $txRef,
+            ],
+        ], 201);
+    }
+
+    public function confirm(): void
+    {
+        $userId = AuthSession::requireUserId(function (): void {
+            $this->json(['error' => 'Connexion requise.'], 401);
+        });
+        if ($userId === null) {
+            return;
+        }
+
+        $payload = $this->getRequestData();
+        $orderId = (int) ($payload['order_id'] ?? 0);
+        $transactionId = (string) ($payload['transaction_id'] ?? '');
+
+        if ($orderId <= 0 || $transactionId === '') {
+            $this->json(['error' => 'Commande et transaction requises.'], 422);
+            return;
+        }
+
+        $order = $this->orders->find($orderId);
+        if ($order === null || (int) ($order['user_id'] ?? 0) !== $userId) {
+            $this->json(['error' => 'Commande introuvable.'], 404);
+            return;
+        }
+
+        $verification = $this->verifyFlutterwaveTransaction($transactionId);
+        if ($verification === null) {
+            $this->json(['error' => 'Impossible de vérifier le paiement.'], 502);
+            return;
+        }
+
+        $status = (string) ($verification['status'] ?? '');
+        $amount = (int) ($verification['amount'] ?? 0);
+        $currency = (string) ($verification['currency'] ?? '');
+
+        if ($status !== 'successful' || $amount !== (int) ($order['amount'] ?? 0) || $currency !== FLUTTERWAVE_CURRENCY) {
+            $payment = $this->payments->findByOrder($orderId);
+            if ($payment !== null) {
+                $this->payments->update((int) ($payment['id'] ?? 0), ['status' => 'failed']);
+            }
+            $this->json(['error' => 'Paiement non confirmé.'], 400);
+            return;
+        }
+
+        $this->orders->update($orderId, ['status' => 'paid']);
+        $payment = $this->payments->findByOrder($orderId);
+        if ($payment !== null) {
+            $this->payments->update((int) ($payment['id'] ?? 0), [
+                'status' => 'success',
+                'paid_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+        $this->json(['message' => 'Paiement confirmé.', 'data' => ['order_id' => $orderId]]);
     }
 
     public function verify(int $pdfId): void
@@ -160,6 +249,90 @@ class ShopController
         }
 
         return $real;
+    }
+
+    private function initFlutterwavePayment(
+        string $txRef,
+        int $amount,
+        string $email,
+        string $name,
+        string $title
+    ): ?string {
+        $payload = [
+            'tx_ref' => $txRef,
+            'amount' => $amount,
+            'currency' => FLUTTERWAVE_CURRENCY,
+            'redirect_url' => $this->buildRedirectUrl('/profil/achats'),
+            'customer' => [
+                'email' => $email,
+                'name' => $name,
+            ],
+            'customizations' => [
+                'title' => 'EducationPriorité',
+                'description' => $title,
+            ],
+        ];
+
+        $response = $this->sendFlutterwaveRequest('/payments', $payload);
+        if (! is_array($response)) {
+            return null;
+        }
+
+        return $response['data']['link'] ?? null;
+    }
+
+    private function verifyFlutterwaveTransaction(string $transactionId): ?array
+    {
+        $response = $this->sendFlutterwaveRequest('/transactions/' . urlencode($transactionId) . '/verify', null, 'GET');
+        if (! is_array($response)) {
+            return null;
+        }
+
+        return $response['data'] ?? null;
+    }
+
+    private function sendFlutterwaveRequest(string $path, ?array $payload, string $method = 'POST'): ?array
+    {
+        $url = rtrim(FLUTTERWAVE_BASE_URL, '/') . $path;
+        $ch = curl_init($url);
+        $headers = [
+            'Authorization: Bearer ' . FLUTTERWAVE_SECRET_KEY,
+            'Content-Type: application/json',
+        ];
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        if ($method === 'POST') {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        } else {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+        }
+
+        $response = curl_exec($ch);
+        if ($response === false) {
+            curl_close($ch);
+            return null;
+        }
+
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        $decoded = json_decode($response, true);
+        if ($status >= 400 || ! is_array($decoded)) {
+            return null;
+        }
+
+        return $decoded;
+    }
+
+    private function buildRedirectUrl(string $path): string
+    {
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+
+        return sprintf('%s://%s%s', $scheme, $host, $path);
     }
 
     private function getRequestData(): array

@@ -34,7 +34,13 @@ class AdminArticleController extends BaseController
             return;
         }
 
-        parent::show($id);
+        $article = $this->model->findWithTags($id);
+        if ($article === null) {
+            $this->json(['error' => 'Ressource introuvable.'], 404);
+            return;
+        }
+
+        $this->json(['data' => $article]);
     }
 
     public function store(): void
@@ -44,7 +50,17 @@ class AdminArticleController extends BaseController
             return;
         }
 
-        parent::store();
+        $payload = $this->getRequestData();
+        $tagIds = $payload['tag_ids'] ?? [];
+        unset($payload['tag_ids']);
+
+        $created = $this->model->createWithTags($payload, is_array($tagIds) ? $tagIds : []);
+        if ($created === null) {
+            $this->json(['error' => 'Impossible de créer l’article.'], 500);
+            return;
+        }
+
+        $this->json(['data' => $created], 201);
     }
 
     public function update(int $id): void
@@ -54,7 +70,17 @@ class AdminArticleController extends BaseController
             return;
         }
 
-        parent::update($id);
+        $payload = $this->getRequestData();
+        $tagIds = $payload['tag_ids'] ?? [];
+        unset($payload['tag_ids']);
+
+        $updated = $this->model->updateWithTags($id, $payload, is_array($tagIds) ? $tagIds : []);
+        if ($updated === null) {
+            $this->json(['error' => 'Impossible de mettre à jour l’article.'], 500);
+            return;
+        }
+
+        $this->json(['data' => $updated]);
     }
 
     public function destroy(int $id): void

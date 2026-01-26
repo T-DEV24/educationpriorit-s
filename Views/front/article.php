@@ -9,8 +9,8 @@
         <div class="article-actions">
             <button class="btn btn-outline" type="button" id="article-like">J'aime</button>
             <button class="btn btn-outline" type="button" id="article-comment-anchor">Commenter</button>
-            <button class="btn btn-ghost" type="button">Partager WhatsApp</button>
-            <button class="btn btn-ghost" type="button">Partager Facebook</button>
+            <a class="btn btn-ghost" id="share-whatsapp" href="#" target="_blank" rel="noopener">Partager WhatsApp</a>
+            <a class="btn btn-ghost" id="share-facebook" href="#" target="_blank" rel="noopener">Partager Facebook</a>
         </div>
         <p class="muted" id="article-like-info">1 like par utilisateur et par article. Connexion requise pour liker ou commenter.</p>
     </div>
@@ -53,6 +53,8 @@ const commentPage = document.getElementById('comment-page');
 const commentContent = document.getElementById('comment-content');
 const commentSubmit = document.getElementById('comment-submit');
 const commentAnchor = document.getElementById('article-comment-anchor');
+const shareWhatsapp = document.getElementById('share-whatsapp');
+const shareFacebook = document.getElementById('share-facebook');
 let articleData = null;
 let commentCurrentPage = 1;
 let commentLastPage = 1;
@@ -79,6 +81,20 @@ function renderArticle(article) {
     articleLike.dataset.articleId = article.id ?? '';
     const likesCount = article.likes_count ?? 0;
     articleLike.textContent = `J'aime (${likesCount})`;
+
+    const shareUrl = window.location.href;
+    const shareText = article.title ?? 'EducationPriorité';
+    const whatsappText = `${shareText} - ${shareUrl}`;
+    shareWhatsapp.href = `https://wa.me/?text=${encodeURIComponent(whatsappText)}`;
+
+    const facebookParams = new URLSearchParams({ u: shareUrl });
+    if (article.image_path) {
+        const absoluteImage = article.image_path.startsWith('http')
+            ? article.image_path
+            : `${window.location.origin}/${article.image_path.replace(/^\\//, '')}`;
+        facebookParams.set('picture', absoluteImage);
+    }
+    shareFacebook.href = `https://www.facebook.com/sharer/sharer.php?${facebookParams.toString()}`;
 
     const description = article.summary || (article.content ? article.content.replace(/<[^>]+>/g, '').slice(0, 160) : '');
     const title = article.title ? `${article.title} | EducationPriorité` : 'EducationPriorité';

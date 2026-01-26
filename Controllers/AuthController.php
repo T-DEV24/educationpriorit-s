@@ -89,6 +89,39 @@ class AuthController
         $this->json(['message' => 'Déconnexion réussie.']);
     }
 
+    public function updatePassword(): void
+    {
+        $userId = AuthSession::requireUserId(function (): void {
+            $this->json(['error' => 'Connexion requise.'], 401);
+        });
+        if ($userId === null) {
+            return;
+        }
+
+        $payload = $this->getRequestData();
+        $current = (string) ($payload['current_password'] ?? '');
+        $new = (string) ($payload['new_password'] ?? '');
+
+        if ($current === '' || $new === '') {
+            $this->json(['error' => 'Mot de passe actuel et nouveau requis.'], 422);
+            return;
+        }
+
+        $user = $this->users->find($userId);
+        if ($user === null || ! password_verify($current, $user['password_hash'] ?? '')) {
+            $this->json(['error' => 'Mot de passe actuel incorrect.'], 403);
+            return;
+        }
+
+        $updated = $this->users->updatePasswordHash($userId, password_hash($new, PASSWORD_DEFAULT));
+        if (! $updated) {
+            $this->json(['error' => 'Impossible de mettre à jour le mot de passe.'], 500);
+            return;
+        }
+
+        $this->json(['message' => 'Mot de passe mis à jour.']);
+    }
+
     private function getRequestData(): array
     {
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';

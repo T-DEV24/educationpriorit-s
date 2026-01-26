@@ -26,6 +26,16 @@ $routes = ROUTE_LIST;
 $route = $routes[$uri] ?? null;
 
 if ($route === null) {
+    if (preg_match('#^/article/([^/]+)$#', $uri, $matches)) {
+        render_view('front/article', ['slug' => $matches[1]], 'Article');
+        exit;
+    }
+
+    if (preg_match('#^/rubriques/([^/]+)$#', $uri, $matches)) {
+        render_view('front/rubrique', ['slug' => $matches[1], 'rubrique' => ucfirst($matches[1])], 'Rubrique');
+        exit;
+    }
+
     http_response_code(404);
     render_view('404', [], 'Page introuvable');
     exit;

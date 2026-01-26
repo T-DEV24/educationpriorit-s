@@ -31,4 +31,10 @@ class UserModel extends BaseModel
     {
         return $this->create($data);
     }
+
+    public function updatePasswordHash(int $userId, string $passwordHash): bool
+    {
+        $updated = $this->update($userId, ['password_hash' => $passwordHash]);
+        return $updated !== null;
+    }
 }

@@ -31,35 +31,8 @@
         <h2 class="headline-md">À la une</h2>
         <a class="link" href="/rubriques">Tout voir</a>
     </div>
-    <div class="card-grid">
-        <article class="card">
-            <span class="tag">Actualité</span>
-            <h3>Hygiène en milieu scolaire : un concept à renforcer</h3>
-            <p>Retour sur les opérations d'assainissement des établissements.</p>
-            <div class="card-actions">
-                <a class="btn btn-small" href="/article">Lire l'article</a>
-                <button class="btn btn-small btn-outline" type="button">Like</button>
-            </div>
-        </article>
-        <article class="card">
-            <span class="tag">Campus</span>
-            <h3>Vers la transformation des chantiers en salle de cours</h3>
-            <p>Accord-cadre pour la formation pratique dans les instituts.</p>
-            <div class="card-actions">
-                <a class="btn btn-small" href="/article">Lire l'article</a>
-                <button class="btn btn-small btn-outline" type="button">Commenter</button>
-            </div>
-        </article>
-        <article class="card">
-            <span class="tag">Enquête</span>
-            <h3>Audience au Cames : les attentes des enseignants</h3>
-            <p>Décryptage des recommandations pour l'enseignement supérieur.</p>
-            <div class="card-actions">
-                <a class="btn btn-small" href="/article">Lire l'article</a>
-                <button class="btn btn-small btn-outline" type="button">Partager</button>
-            </div>
-        </article>
-    </div>
+    <div class="alert alert-danger d-none" id="home-article-alert" role="alert"></div>
+    <div class="card-grid" id="home-article-grid"></div>
 </section>
 
 <section class="section alt">
@@ -88,3 +61,95 @@
         </article>
     </div>
 </section>
+
+<script>
+const homeGrid = document.getElementById('home-article-grid');
+const homeAlert = document.getElementById('home-article-alert');
+
+function formatCard(article) {
+    const card = document.createElement('article');
+    card.className = 'card';
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.textContent = article.category_name ?? 'Rubrique';
+    const title = document.createElement('h3');
+    title.textContent = article.title ?? 'Article';
+    const summary = document.createElement('p');
+    summary.textContent = article.summary ?? 'Découvrez cet article.';
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+    const link = document.createElement('a');
+    link.className = 'btn btn-small';
+    link.href = article.slug ? `/article/${article.slug}` : '/article';
+    link.textContent = 'Lire l\'article';
+    const likeButton = document.createElement('button');
+    likeButton.className = 'btn btn-small btn-outline js-like';
+    likeButton.type = 'button';
+    likeButton.dataset.articleId = article.id ?? '';
+    likeButton.textContent = `Like (${article.likes_count ?? 0})`;
+    actions.append(link, likeButton);
+    card.append(tag, title, summary, actions);
+    return card;
+}
+
+function loadHomeArticles() {
+    homeAlert.classList.add('d-none');
+    fetch('/api/articles?limit=6&page=1')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Impossible de charger les articles.');
+            }
+            return response.json();
+        })
+        .then(payload => {
+            const articles = payload.data ?? [];
+            homeGrid.innerHTML = '';
+            if (articles.length === 0) {
+                homeGrid.innerHTML = '<p class="muted">Aucun article publié pour le moment.</p>';
+                return;
+            }
+            articles.forEach(article => {
+                homeGrid.appendChild(formatCard(article));
+            });
+        })
+        .catch(error => {
+            homeAlert.textContent = error.message;
+            homeAlert.classList.remove('d-none');
+        });
+}
+
+homeGrid.addEventListener('click', event => {
+    const target = event.target;
+    if (!target.classList.contains('js-like')) {
+        return;
+    }
+    const articleId = target.dataset.articleId;
+    if (!articleId) {
+        return;
+    }
+    fetch('/api/likes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ article_id: Number(articleId) }),
+        credentials: 'same-origin',
+    })
+        .then(response => {
+            if (!response.ok && response.status !== 409) {
+                throw new Error('Impossible d\'ajouter le like.');
+            }
+            return response.json();
+        })
+        .then(() => fetch(`/api/likes?article_id=${articleId}`))
+        .then(response => response.json())
+        .then(payload => {
+            const count = payload.data?.count ?? 0;
+            target.textContent = `Like (${count})`;
+        })
+        .catch(() => {
+            homeAlert.textContent = 'Impossible d\'ajouter le like. Connectez-vous si nécessaire.';
+            homeAlert.classList.remove('d-none');
+        });
+});
+
+loadHomeArticles();
+</script>

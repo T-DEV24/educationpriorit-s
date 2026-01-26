@@ -165,4 +165,82 @@ class ArticleModel extends BaseModel
 
         return $result === false ? null : $result;
     }
+
+    public function findWithTags(int $id): ?array
+    {
+        $article = $this->find($id);
+        if ($article === null) {
+            return null;
+        }
+
+        $sql = 'SELECT tag_id FROM article_tags WHERE article_id = :article_id';
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':article_id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $tagIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $article['tag_ids'] = array_map('intval', $tagIds ?: []);
+
+        return $article;
+    }
+
+    public function createWithTags(array $data, array $tagIds): ?array
+    {
+        $this->db->beginTransaction();
+        try {
+            $article = $this->create($data);
+            if ($article === null) {
+                $this->db->rollBack();
+                return null;
+            }
+            $this->syncTags((int) $article['id'], $tagIds);
+            $this->db->commit();
+
+            return $article;
+        } catch (Throwable $error) {
+            $this->db->rollBack();
+            return null;
+        }
+    }
+
+    public function updateWithTags(int $id, array $data, array $tagIds): ?array
+    {
+        $this->db->beginTransaction();
+        try {
+            $article = $this->update($id, $data);
+            if ($article === null) {
+                $this->db->rollBack();
+                return null;
+            }
+            $this->syncTags($id, $tagIds);
+            $this->db->commit();
+
+            return $article;
+        } catch (Throwable $error) {
+            $this->db->rollBack();
+            return null;
+        }
+    }
+
+    private function syncTags(int $articleId, array $tagIds): void
+    {
+        $cleanIds = array_values(array_unique(array_filter(array_map('intval', $tagIds), static function (int $id): bool {
+            return $id > 0;
+        })));
+
+        $delete = $this->db->prepare('DELETE FROM article_tags WHERE article_id = :article_id');
+        $delete->bindValue(':article_id', $articleId, PDO::PARAM_INT);
+        $delete->execute();
+
+        if ($cleanIds === []) {
+            return;
+        }
+
+        $insert = $this->db->prepare('INSERT INTO article_tags (article_id, tag_id) VALUES (:article_id, :tag_id)');
+        foreach ($cleanIds as $tagId) {
+            $insert->bindValue(':article_id', $articleId, PDO::PARAM_INT);
+            $insert->bindValue(':tag_id', $tagId, PDO::PARAM_INT);
+            $insert->execute();
+        }
+    }
 }

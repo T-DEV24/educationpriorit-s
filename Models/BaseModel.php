@@ -110,6 +110,12 @@ abstract class BaseModel
         return $stmt->rowCount() > 0;
     }
 
+    public function countAll(): int
+    {
+        $sql = sprintf('SELECT COUNT(*) FROM %s', $this->table);
+        return (int) $this->db->query($sql)->fetchColumn();
+    }
+
     protected function filterData(array $data): array
     {
         if ($this->fillable === []) {

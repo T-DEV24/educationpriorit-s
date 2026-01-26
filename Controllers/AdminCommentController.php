@@ -19,7 +19,24 @@ class AdminCommentController extends BaseController
             return;
         }
 
-        parent::index();
+        $page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1;
+        $limit = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT) ?: 20;
+        $page = max(1, $page);
+        $limit = max(1, min(100, $limit));
+        $offset = ($page - 1) * $limit;
+
+        $total = $this->model->countAll();
+        $items = $this->model->findAll($limit, $offset);
+
+        $this->json([
+            'data' => $items,
+            'pagination' => [
+                'page' => $page,
+                'limit' => $limit,
+                'total' => $total,
+                'pages' => (int) ceil($total / $limit),
+            ],
+        ]);
     }
 
     public function show(int $id): void

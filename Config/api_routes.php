@@ -3,12 +3,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../Controllers/UsersController.php';
-require_once __DIR__ . '/../Controllers/ArticlesController.php';
-require_once __DIR__ . '/../Controllers/CategoriesController.php';
 require_once __DIR__ . '/../Controllers/ArticleController.php';
 require_once __DIR__ . '/../Controllers/CategoryController.php';
-require_once __DIR__ . '/../Controllers/CommentsController.php';
-require_once __DIR__ . '/../Controllers/LikesController.php';
 require_once __DIR__ . '/../Controllers/CommentController.php';
 require_once __DIR__ . '/../Controllers/LikeController.php';
 require_once __DIR__ . '/../Controllers/PdfEditionsController.php';

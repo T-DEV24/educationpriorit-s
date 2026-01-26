@@ -13,6 +13,22 @@ class CommentController extends BaseController
         $this->model = new CommentModel();
     }
 
+    public function index(): void
+    {
+        $articleId = filter_input(INPUT_GET, 'article_id', FILTER_VALIDATE_INT) ?: 0;
+        if ($articleId > 0) {
+            $page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1;
+            $limit = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT) ?: 10;
+            $includePending = filter_input(INPUT_GET, 'include_pending', FILTER_VALIDATE_BOOLEAN);
+
+            $data = $this->model->findByArticlePaginated($articleId, $page, $limit, ! $includePending);
+            $this->json(['data' => $data['items'], 'pagination' => $data['pagination']]);
+            return;
+        }
+
+        parent::index();
+    }
+
     public function store(): void
     {
         $userId = AuthSession::requireUserId(function (): void {

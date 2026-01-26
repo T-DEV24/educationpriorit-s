@@ -15,10 +15,26 @@ class CategoryController extends BaseController
 
     public function index(): void
     {
+        $slug = trim((string) filter_input(INPUT_GET, 'slug', FILTER_UNSAFE_RAW));
+        if ($slug !== '') {
+            $category = $this->model->findBySlug($slug);
+            if ($category === null) {
+                $this->json(['error' => 'Catégorie introuvable.'], 404);
+                return;
+            }
+            $this->json(['data' => $category]);
+            return;
+        }
+
         $page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1;
         $limit = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT) ?: 20;
+        $withCounts = filter_input(INPUT_GET, 'with_counts', FILTER_VALIDATE_BOOLEAN);
 
-        $data = $this->model->findPaginated($page, $limit);
+        if ($withCounts) {
+            $data = $this->model->findPaginatedWithCounts($page, $limit);
+        } else {
+            $data = $this->model->findPaginated($page, $limit);
+        }
         $this->json(['data' => $data['items'], 'pagination' => $data['pagination']]);
     }
 

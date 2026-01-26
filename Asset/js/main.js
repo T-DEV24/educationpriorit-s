@@ -26,7 +26,13 @@ if (scrollButton) {
 }
 
 window.apiFetch = async (url, options = {}) => {
-  const response = await fetch(url, options);
+  const token = localStorage.getItem('auth_token');
+  const mergedOptions = { ...options };
+  mergedOptions.headers = { ...(options.headers || {}) };
+  if (token && !mergedOptions.headers.Authorization) {
+    mergedOptions.headers.Authorization = `Bearer ${token}`;
+  }
+  const response = await fetch(url, mergedOptions);
   const contentType = response.headers.get('content-type') || '';
   let data = null;
   let text = null;
@@ -62,4 +68,14 @@ window.getApiErrorMessage = (payload, fallback = 'Une erreur est survenue.') => 
     return 'Une erreur est survenue. Merci de réessayer.';
   }
   return fallback;
+};
+
+window.storeAuthToken = (token) => {
+  if (token) {
+    localStorage.setItem('auth_token', token);
+  }
+};
+
+window.clearAuthToken = () => {
+  localStorage.removeItem('auth_token');
 };

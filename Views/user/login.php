@@ -40,6 +40,7 @@ loginForm.addEventListener('submit', event => {
             if (!payload.ok) {
                 throw new Error(window.getApiErrorMessage(payload, 'Impossible de se connecter.'));
             }
+            window.storeAuthToken(payload.data?.token ?? payload.token);
             window.location.href = '/profil';
         })
         .catch(error => {

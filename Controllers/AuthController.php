@@ -52,7 +52,8 @@ class AuthController
 
         AuthSession::setUser($created);
 
-        $this->json(['data' => $created], 201);
+        $token = AuthSession::generateJwt($created);
+        $this->json(['data' => $created, 'token' => $token], 201);
     }
 
     public function login(): void
@@ -79,7 +80,8 @@ class AuthController
 
         AuthSession::setUser($user);
 
-        $this->json(['message' => 'Connexion réussie.', 'data' => $user]);
+        $token = AuthSession::generateJwt($user);
+        $this->json(['message' => 'Connexion réussie.', 'data' => $user, 'token' => $token]);
     }
 
     public function logout(): void

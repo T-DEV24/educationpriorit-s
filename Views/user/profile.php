@@ -53,6 +53,7 @@ profileLogout.addEventListener('click', () => {
         credentials: 'same-origin',
     })
         .finally(() => {
+            window.clearAuthToken();
             window.location.href = '/connexion';
         });
 });

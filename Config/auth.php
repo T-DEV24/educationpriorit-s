@@ -38,6 +38,9 @@ final class AuthSession
                 $userId = (int) ($payload['sub'] ?? 0);
                 if ($userId > 0) {
                     $_SESSION['user_id'] = $userId;
+                    if (isset($payload['role_id'])) {
+                        $_SESSION['role_id'] = (int) $payload['role_id'];
+                    }
                     return $userId;
                 }
             }

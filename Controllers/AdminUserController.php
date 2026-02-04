@@ -57,7 +57,24 @@ class AdminUserController extends BaseController
             return;
         }
 
-        parent::store();
+        $payload = $this->preparePayload($this->getRequestData());
+        if ($payload === []) {
+            $this->json(['error' => 'Données invalides ou manquantes.'], 422);
+            return;
+        }
+
+        if (! isset($payload['password_hash']) || $payload['password_hash'] === '') {
+            $this->json(['error' => 'Mot de passe requis.'], 422);
+            return;
+        }
+
+        $created = $this->model->create($payload);
+        if ($created === null) {
+            $this->json(['error' => 'Aucune donnée autorisée fournie.'], 422);
+            return;
+        }
+
+        $this->json(['data' => $created], 201);
     }
 
     public function update(int $id): void
@@ -67,7 +84,19 @@ class AdminUserController extends BaseController
             return;
         }
 
-        parent::update($id);
+        $payload = $this->preparePayload($this->getRequestData());
+        if ($payload === []) {
+            $this->json(['error' => 'Données invalides ou manquantes.'], 422);
+            return;
+        }
+
+        $updated = $this->model->update($id, $payload);
+        if ($updated === null) {
+            $this->json(['error' => 'Aucune donnée autorisée fournie.'], 422);
+            return;
+        }
+
+        $this->json(['data' => $updated]);
     }
 
     public function destroy(int $id): void
@@ -78,5 +107,24 @@ class AdminUserController extends BaseController
         }
 
         parent::destroy($id);
+    }
+
+    private function preparePayload(array $payload): array
+    {
+        if (isset($payload['password']) && $payload['password'] !== '') {
+            $payload['password_hash'] = password_hash((string) $payload['password'], PASSWORD_DEFAULT);
+        }
+
+        unset($payload['password']);
+
+        if (! isset($payload['role_id'])) {
+            $payload['role_id'] = 2;
+        }
+
+        if (! isset($payload['is_active'])) {
+            $payload['is_active'] = 1;
+        }
+
+        return $payload;
     }
 }

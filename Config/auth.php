@@ -6,8 +6,22 @@ require_once __DIR__ . '/jwt.php';
 
 final class AuthSession
 {
+    private static bool $initialized = false;
+
     public static function start(): void
     {
+        if (! self::$initialized) {
+            $secure = ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+            session_set_cookie_params([
+                'lifetime' => 0,
+                'path' => '/',
+                'domain' => '',
+                'secure' => $secure,
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
+            self::$initialized = true;
+        }
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -38,6 +52,9 @@ final class AuthSession
                 $userId = (int) ($payload['sub'] ?? 0);
                 if ($userId > 0) {
                     $_SESSION['user_id'] = $userId;
+                    if (isset($payload['role_id'])) {
+                        $_SESSION['role_id'] = (int) $payload['role_id'];
+                    }
                     return $userId;
                 }
             }
@@ -122,7 +139,8 @@ final class AuthSession
     {
         $header = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
         if ($header === '') {
-            return null;
+            $cookieToken = $_COOKIE['auth_token'] ?? '';
+            return $cookieToken !== '' ? $cookieToken : null;
         }
         if (preg_match('/Bearer\\s+(\\S+)/i', $header, $matches)) {
             return $matches[1];

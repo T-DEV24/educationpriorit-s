@@ -138,6 +138,10 @@ CREATE TABLE media (
 
 INSERT INTO roles (name) VALUES ('Admin'), ('Rédacteur');
 
+-- Default admin account (email: admin@educationpriorite.local / password: Admin@1234)
+INSERT INTO users (role_id, full_name, email, password_hash, is_active)
+VALUES (1, 'Administrateur', 'admin@educationpriorite.local', '$2y$12$UBJqUgcPcGpE823hNa1QtuLZDb9fJp7UOxPfNt35SGVKy05qSsiCW', 1);
+
 -- Base categories (rubriques)
 INSERT INTO categories (name, slug) VALUES
   ('Actualité', 'actualite'),

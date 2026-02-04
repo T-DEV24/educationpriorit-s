@@ -87,9 +87,11 @@ window.getApiErrorMessage = (payload, fallback = 'Une erreur est survenue.') => 
 window.storeAuthToken = (token) => {
   if (token) {
     localStorage.setItem('auth_token', token);
+    document.cookie = `auth_token=${encodeURIComponent(token)}; path=/; SameSite=Lax`;
   }
 };
 
 window.clearAuthToken = () => {
   localStorage.removeItem('auth_token');
+  document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
 };

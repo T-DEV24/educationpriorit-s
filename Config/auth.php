@@ -125,7 +125,8 @@ final class AuthSession
     {
         $header = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
         if ($header === '') {
-            return null;
+            $cookieToken = $_COOKIE['auth_token'] ?? '';
+            return $cookieToken !== '' ? $cookieToken : null;
         }
         if (preg_match('/Bearer\\s+(\\S+)/i', $header, $matches)) {
             return $matches[1];

@@ -62,17 +62,15 @@
 
     const loadUsers = () => {
         userAlert.classList.add('d-none');
-        fetch(`/api/admin/users?page=${userCurrentPage}&limit=10`, { credentials: 'same-origin' })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Impossible de charger les utilisateurs.');
-                }
-                return response.json();
-            })
+        window.apiFetch(`/api/admin/users?page=${userCurrentPage}&limit=10`, { credentials: 'same-origin' })
             .then((payload) => {
-                userRows = payload.data ?? [];
-                userLastPage = payload.pagination?.pages ?? 1;
-                userPage.textContent = `Page ${payload.pagination?.page ?? userCurrentPage} / ${userLastPage}`;
+                if (!payload.ok) {
+                    throw new Error(window.getApiErrorMessage(payload, 'Impossible de charger les utilisateurs.'));
+                }
+                userRows = payload.data?.data ?? payload.data ?? [];
+                userLastPage = payload.data?.pagination?.pages ?? payload.pagination?.pages ?? 1;
+                const currentPage = payload.data?.pagination?.page ?? payload.pagination?.page ?? userCurrentPage;
+                userPage.textContent = `Page ${currentPage} / ${userLastPage}`;
                 renderUsers(userRows);
             })
             .catch((error) => {
@@ -95,16 +93,26 @@
     };
 
     userCreate.addEventListener('click', () => {
-        const payload = promptForPayload('{"full_name":"","email":"","password_hash":"","role_id":2,"is_active":1}');
+        const payload = promptForPayload('{"full_name":"","email":"","password":"","role_id":2,"is_active":1}');
         if (!payload) {
             return;
         }
-        fetch('/api/admin/users', {
+        window.apiFetch('/api/admin/users', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'same-origin',
             body: JSON.stringify(payload),
-        }).then(() => loadUsers());
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(window.getApiErrorMessage(response, 'Impossible de créer l\'utilisateur.'));
+                }
+                loadUsers();
+            })
+            .catch((error) => {
+                userAlert.textContent = error.message;
+                userAlert.classList.remove('d-none');
+            });
     });
 
     userBody.addEventListener('click', (event) => {
@@ -116,22 +124,42 @@
             if (!payload) {
                 return;
             }
-            fetch(`/api/admin/users/${id}`, {
+            window.apiFetch(`/api/admin/users/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'same-origin',
                 body: JSON.stringify(payload),
-            }).then(() => loadUsers());
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(window.getApiErrorMessage(response, 'Impossible de mettre à jour l\'utilisateur.'));
+                    }
+                    loadUsers();
+                })
+                .catch((error) => {
+                    userAlert.textContent = error.message;
+                    userAlert.classList.remove('d-none');
+                });
         }
         if (target.classList.contains('admin-user-delete')) {
             const id = target.getAttribute('data-id');
             if (!window.confirm('Supprimer cet utilisateur ?')) {
                 return;
             }
-            fetch(`/api/admin/users/${id}`, {
+            window.apiFetch(`/api/admin/users/${id}`, {
                 method: 'DELETE',
                 credentials: 'same-origin',
-            }).then(() => loadUsers());
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(window.getApiErrorMessage(response, 'Impossible de supprimer l\'utilisateur.'));
+                    }
+                    loadUsers();
+                })
+                .catch((error) => {
+                    userAlert.textContent = error.message;
+                    userAlert.classList.remove('d-none');
+                });
         }
     });
 

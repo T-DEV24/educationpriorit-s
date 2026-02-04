@@ -19,6 +19,7 @@ define('ROUTE_LIST', [
     '/connexion' => ['view' => 'user/login', 'title' => 'Connexion'],
     '/inscription' => ['view' => 'user/register', 'title' => 'Inscription'],
     '/profil' => ['view' => 'user/profile', 'title' => 'Profil'],
+    '/profil/accueil' => ['view' => 'user/dashboard', 'title' => 'Tableau de bord'],
     '/profil/achats' => ['view' => 'user/purchases', 'title' => 'Historique des achats'],
     '/profil/commentaires' => ['view' => 'user/comments', 'title' => 'Mes commentaires'],
     '/profil/mot-de-passe' => ['view' => 'user/password', 'title' => 'Mot de passe'],

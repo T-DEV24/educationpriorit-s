@@ -25,6 +25,10 @@ Les endpoints listés supportent généralement :
 - `page` (défaut: 1)
 - `limit` (défaut: 12 ou 20 selon la ressource)
 
+Certains endpoints héritent du contrôleur de base et utilisent plutôt :
+- `limit` (défaut: 100)
+- `offset` (défaut: 0)
+
 **Exemple** :
 ```
 GET /api/articles?page=1&limit=12
@@ -104,6 +108,22 @@ POST /api/auth/logout
 Réponse `200` :
 ```json
 { "message": "Déconnexion réussie." }
+```
+
+### Changement de mot de passe (connexion requise)
+```
+POST /api/auth/password
+```
+Payload :
+```json
+{
+  "current_password": "secret",
+  "new_password": "new-secret"
+}
+```
+Réponse `200` :
+```json
+{ "message": "Mot de passe mis à jour." }
 ```
 
 ---
@@ -186,6 +206,10 @@ Payload exemple :
 ```
 GET /api/comments?page=1&limit=20
 ```
+Paramètres optionnels :
+- `article_id` (filtre par article)
+- `include_pending` (booléen, inclure les commentaires non approuvés)
+> Quand `article_id` est fourni, `limit` par défaut est 10.
 
 ### Création (connexion requise)
 ```
@@ -238,6 +262,15 @@ POST /api/shop/purchase
 Payload :
 ```json
 { "pdf_edition_id": 10 }
+```
+
+### Confirmation de paiement (connexion requise)
+```
+POST /api/shop/confirm
+```
+Payload :
+```json
+{ "order_id": 123, "transaction_id": "tx_..." }
 ```
 
 ### Vérification d’accès (connexion requise)
@@ -310,10 +343,16 @@ DELETE /api/admin/pdf-editions/{id}
 
 ### Médias
 ```
-GET /api/media?page=1&limit=100
+GET /api/media?limit=100&offset=0
 ```
+```
+POST /api/media/upload
+```
+Form-data :
+- `file` (jpg/png/webp/pdf)
+- `alt_text` (optionnel)
 
 ### Pages
 ```
-GET /api/pages?page=1&limit=100
+GET /api/pages?limit=100&offset=0
 ```

@@ -32,6 +32,20 @@ window.apiFetch = async (url, options = {}) => {
   if (token && !mergedOptions.headers.Authorization) {
     mergedOptions.headers.Authorization = `Bearer ${token}`;
   }
+  if (mergedOptions.body && !mergedOptions.headers['Content-Type'] && !mergedOptions.headers['content-type']) {
+    const body = mergedOptions.body;
+    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+    const isUrlEncoded = typeof URLSearchParams !== 'undefined' && body instanceof URLSearchParams;
+    const isBlob = typeof Blob !== 'undefined' && body instanceof Blob;
+    if (!isFormData && !isUrlEncoded && !isBlob) {
+      if (typeof body === 'object') {
+        mergedOptions.body = JSON.stringify(body);
+      }
+      if (typeof mergedOptions.body === 'string') {
+        mergedOptions.headers['Content-Type'] = 'application/json; charset=utf-8';
+      }
+    }
+  }
   const response = await fetch(url, mergedOptions);
   const contentType = response.headers.get('content-type') || '';
   let data = null;

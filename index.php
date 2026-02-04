@@ -2,6 +2,9 @@
 
 require __DIR__ . '/Config/routes.php';
 require __DIR__ . '/Config/api_routes.php';
+require __DIR__ . '/Config/auth.php';
+
+AuthSession::start();
 
 function render_view(string $view, array $data = [], string $title = ''): void
 {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/jwt.php';
 
+if (! class_exists('AuthSession')) {
 final class AuthSession
 {
     private static bool $initialized = false;
@@ -169,4 +170,5 @@ final class AuthSession
 
         session_destroy();
     }
+}
 }

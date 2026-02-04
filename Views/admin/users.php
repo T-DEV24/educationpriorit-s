@@ -95,7 +95,7 @@
     };
 
     userCreate.addEventListener('click', () => {
-        const payload = promptForPayload('{"full_name":"","email":"","password_hash":"","role_id":2,"is_active":1}');
+        const payload = promptForPayload('{"full_name":"","email":"","password":"","role_id":2,"is_active":1}');
         if (!payload) {
             return;
         }

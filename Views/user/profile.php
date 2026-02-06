@@ -54,7 +54,7 @@ profileLogout.addEventListener('click', () => {
     })
         .finally(() => {
             window.clearAuthToken();
-            window.location.href = '/connexion';
+            window.location.href = '/login';
         });
 });
 

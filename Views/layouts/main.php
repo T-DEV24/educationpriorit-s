@@ -31,8 +31,8 @@
                 <a href="/contact">Contact</a>
             </nav>
             <div class="header-actions d-flex gap-2 flex-wrap">
-                <a class="btn btn-outline" href="/connexion">Connexion</a>
-                <a class="btn btn-primary" href="/inscription">Inscription</a>
+                <a class="btn btn-outline" href="/login">Connexion</a>
+                <a class="btn btn-primary" href="/register">Inscription</a>
             </div>
         </div>
     </header>
@@ -67,8 +67,8 @@
             <div class="footer-col">
                 <span class="footer-title">Compte</span>
                 <div class="footer-links">
-                    <a href="/connexion">Connexion</a>
-                    <a href="/inscription">Inscription</a>
+                    <a href="/login">Connexion</a>
+                    <a href="/register">Inscription</a>
                     <a href="/profil">Mon profil</a>
                 </div>
             </div>

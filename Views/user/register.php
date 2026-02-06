@@ -21,7 +21,7 @@
             <h3>Activation du compte</h3>
             <p class="muted">Après inscription, un email d’activation est envoyé pour valider votre compte.</p>
         </div>
-        <p class="muted">Déjà inscrit ? <a class="link" href="/connexion">Se connecter</a></p>
+        <p class="muted">Déjà inscrit ? <a class="link" href="/login">Se connecter</a></p>
     </div>
 </section>
 

@@ -46,7 +46,15 @@ if ($rawUrl === '') {
     $requestPath = parse_url((string) $requestUri, PHP_URL_PATH) ?? '';
     $requestPath = is_string($requestPath) ? $requestPath : '';
     if ($requestPath !== '' && $requestPath !== '/index.php') {
-        $rawUrl = ltrim($requestPath, '/');
+        $requestPath = ltrim($requestPath, '/');
+        if (strncmp($requestPath, 'index.php/', 10) === 0) {
+            $requestPath = substr($requestPath, 10);
+        } elseif ($requestPath === 'index.php') {
+            $requestPath = '';
+        }
+        if ($requestPath !== '') {
+            $rawUrl = $requestPath;
+        }
     }
 }
 $sanitizedUrl = filter_var($rawUrl, FILTER_SANITIZE_URL) ?: '';

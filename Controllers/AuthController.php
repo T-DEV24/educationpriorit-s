@@ -53,10 +53,16 @@ class AuthController
             return;
         }
 
-        AuthSession::setUser($created);
+        $verified = $this->users->findByEmail($email);
+        if ($verified === null) {
+            $this->json(['error' => 'Compte créé mais non retrouvé. Merci de réessayer.'], 500);
+            return;
+        }
 
-        $token = AuthSession::generateJwt($created);
-        $this->json(['data' => $created, 'token' => $token], 201);
+        $this->json([
+            'message' => sprintf('Compte créé avec succès, %s.', $verified['full_name'] ?? $fullName),
+            'data' => $verified,
+        ], 201);
     }
 
     public function login(): void

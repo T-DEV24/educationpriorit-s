@@ -16,6 +16,7 @@
             </label>
             <button class="btn btn-primary" type="submit">Créer mon compte</button>
         </form>
+        <div class="alert alert-success d-none" id="register-success" role="alert"></div>
         <div class="alert alert-danger d-none" id="register-alert" role="alert"></div>
         <div class="info-card">
             <h3>Activation du compte</h3>
@@ -30,10 +31,12 @@ const registerForm = document.getElementById('register-form');
 const registerName = document.getElementById('register-name');
 const registerEmail = document.getElementById('register-email');
 const registerPassword = document.getElementById('register-password');
+const registerSuccess = document.getElementById('register-success');
 const registerAlert = document.getElementById('register-alert');
 
 registerForm.addEventListener('submit', event => {
     event.preventDefault();
+    registerSuccess.classList.add('d-none');
     registerAlert.classList.add('d-none');
     window.apiFetch('/api/auth/register', {
         method: 'POST',
@@ -44,8 +47,12 @@ registerForm.addEventListener('submit', event => {
             if (!payload.ok) {
                 throw new Error(window.getApiErrorMessage(payload, 'Impossible de créer le compte.'));
             }
-            window.storeAuthToken(payload.data?.token ?? payload.token);
-            window.location.href = '/profil';
+            const message = payload.data?.message || payload.message || 'Compte créé avec succès.';
+            registerSuccess.textContent = message;
+            registerSuccess.classList.remove('d-none');
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 1500);
         })
         .catch(error => {
             registerAlert.textContent = error.message;

@@ -41,6 +41,14 @@ function render_view(string $view, array $data = [], string $title = ''): void
 
 $rawUrl = $_GET['url'] ?? '';
 $rawUrl = is_string($rawUrl) ? $rawUrl : '';
+if ($rawUrl === '') {
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    $requestPath = parse_url((string) $requestUri, PHP_URL_PATH) ?? '';
+    $requestPath = is_string($requestPath) ? $requestPath : '';
+    if ($requestPath !== '' && $requestPath !== '/index.php') {
+        $rawUrl = ltrim($requestPath, '/');
+    }
+}
 $sanitizedUrl = filter_var($rawUrl, FILTER_SANITIZE_URL) ?: '';
 $sanitizedUrl = trim($sanitizedUrl, '/');
 $segments = $sanitizedUrl === '' ? [] : array_values(array_filter(explode('/', $sanitizedUrl), 'strlen'));

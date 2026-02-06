@@ -17,9 +17,12 @@ class AuthController
     public function register(): void
     {
         $payload = $this->getRequestData();
-        $fullName = trim((string) ($payload['full_name'] ?? ''));
-        $email = trim((string) ($payload['email'] ?? ''));
-        $password = (string) ($payload['password'] ?? '');
+        $fullNameInput = filter_input(INPUT_POST, 'full_name', FILTER_UNSAFE_RAW);
+        $emailInput = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        $passwordInput = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
+        $fullName = trim((string) ($fullNameInput ?? ($payload['full_name'] ?? '')));
+        $email = trim((string) ($emailInput ?? ($payload['email'] ?? '')));
+        $password = (string) ($passwordInput ?? ($payload['password'] ?? ''));
 
         if ($fullName === '' || $email === '' || $password === '') {
             $this->json(['error' => 'Nom complet, email et mot de passe requis.'], 422);
@@ -44,7 +47,7 @@ class AuthController
             'is_active' => 1,
         ];
 
-        $created = $this->users->createUser($data);
+        $created = $this->users->create($data);
         if ($created === null) {
             $this->json(['error' => 'Impossible de créer le compte.'], 500);
             return;

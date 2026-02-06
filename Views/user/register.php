@@ -1,18 +1,18 @@
 <section class="section">
     <div class="container narrow">
         <h1>Inscription</h1>
-        <form class="form-grid" id="register-form">
+        <form class="form-grid" id="register-form" method="post" action="/api/auth/register">
             <label>
                 Nom complet
-                <input type="text" id="register-name" placeholder="Votre nom" required>
+                <input type="text" id="register-name" name="full_name" placeholder="Votre nom" required>
             </label>
             <label>
                 Email
-                <input type="email" id="register-email" placeholder="Votre email" required>
+                <input type="email" id="register-email" name="email" placeholder="Votre email" required>
             </label>
             <label>
                 Mot de passe
-                <input type="password" id="register-password" placeholder="Créer un mot de passe" required>
+                <input type="password" id="register-password" name="password" placeholder="Créer un mot de passe" required>
             </label>
             <button class="btn btn-primary" type="submit">Créer mon compte</button>
         </form>
@@ -37,13 +37,8 @@ registerForm.addEventListener('submit', event => {
     registerAlert.classList.add('d-none');
     window.apiFetch('/api/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
-        body: JSON.stringify({
-            full_name: registerName.value.trim(),
-            email: registerEmail.value.trim(),
-            password: registerPassword.value,
-        }),
+        body: new FormData(registerForm),
     })
         .then((payload) => {
             if (!payload.ok) {

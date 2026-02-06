@@ -39,8 +39,14 @@ class AuthController
             return;
         }
 
+        $roleId = $this->users->getRegistrationRoleId();
+        if ($roleId === null) {
+            $this->json(['error' => 'Aucun rôle disponible pour l\'inscription.'], 500);
+            return;
+        }
+
         $data = [
-            'role_id' => 2,
+            'role_id' => $roleId,
             'full_name' => $fullName,
             'email' => $email,
             'password_hash' => password_hash($password, PASSWORD_DEFAULT),

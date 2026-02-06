@@ -14,7 +14,7 @@
         </form>
         <div class="alert alert-danger d-none" id="login-alert" role="alert"></div>
         <p class="muted">Votre compte doit être activé pour accéder à votre profil et à vos achats.</p>
-        <p class="muted">Pas encore de compte ? <a class="link" href="/inscription">Créer un compte</a></p>
+        <p class="muted">Pas encore de compte ? <a class="link" href="/register">Créer un compte</a></p>
     </div>
 </section>
 
@@ -42,7 +42,7 @@ loginForm.addEventListener('submit', event => {
             }
             window.storeAuthToken(payload.data?.token ?? payload.token);
             const roleId = Number(payload.data?.role_id ?? payload.data?.data?.role_id ?? 0);
-            window.location.href = roleId === 1 ? '/admin' : '/profil/accueil';
+            window.location.href = roleId === 1 ? '/admin' : '/dashboard';
         })
         .catch(error => {
             loginAlert.textContent = error.message;

@@ -60,7 +60,10 @@ abstract class BaseModel
         foreach ($payload as $column => $value) {
             $stmt->bindValue(':' . $column, $value);
         }
-        $stmt->execute();
+        $executed = $stmt->execute();
+        if (! $executed) {
+            return null;
+        }
 
         $id = (int) $this->db->lastInsertId();
 

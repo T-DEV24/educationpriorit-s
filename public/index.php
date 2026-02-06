@@ -2,6 +2,28 @@
 
 declare(strict_types=1);
 
+$baseDir = dirname(__DIR__);
+$appEnv = strtolower((string) (getenv('APP_ENV') ?: 'production'));
+$serverName = $_SERVER['SERVER_NAME'] ?? '';
+$isLocal = in_array($appEnv, ['local', 'development', 'dev'], true)
+    || in_array($serverName, ['localhost', '127.0.0.1'], true);
+
+ini_set('log_errors', '1');
+$logDir = $baseDir . '/storage/logs';
+if (! is_dir($logDir)) {
+    mkdir($logDir, 0777, true);
+}
+ini_set('error_log', $logDir . '/php-error.log');
+
+if ($isLocal) {
+    ini_set('display_errors', '1');
+    error_reporting(E_ALL);
+} else {
+    ini_set('display_errors', '0');
+}
+
+session_start();
+
 session_start();
 
 $baseDir = dirname(__DIR__);

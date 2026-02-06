@@ -22,12 +22,6 @@ if ($isLocal) {
     ini_set('display_errors', '0');
 }
 
-session_start();
-
-session_start();
-
-$baseDir = dirname(__DIR__);
-
 require $baseDir . '/Config/routes.php';
 require $baseDir . '/Config/api_routes.php';
 require $baseDir . '/Config/auth.php';

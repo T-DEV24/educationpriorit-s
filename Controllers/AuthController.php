@@ -59,8 +59,10 @@ class AuthController
     public function login(): void
     {
         $payload = $this->getRequestData();
-        $email = trim((string) ($payload['email'] ?? ''));
-        $password = (string) ($payload['password'] ?? '');
+        $emailInput = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        $passwordInput = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
+        $email = trim((string) ($emailInput ?? ($payload['email'] ?? '')));
+        $password = (string) ($passwordInput ?? ($payload['password'] ?? ''));
 
         if ($email === '' || $password === '') {
             $this->json(['error' => 'Email et mot de passe requis.'], 422);

@@ -1,20 +1,20 @@
 <section class="section">
     <div class="container narrow">
         <h1>Connexion</h1>
-        <form class="form-grid" id="login-form">
+        <form class="form-grid" id="login-form" method="post" action="/api/auth/login">
             <label>
                 Email
-                <input type="email" id="login-email" placeholder="Votre email" required>
+                <input type="email" id="login-email" name="email" placeholder="Votre email" required>
             </label>
             <label>
                 Mot de passe
-                <input type="password" id="login-password" placeholder="Votre mot de passe" required>
+                <input type="password" id="login-password" name="password" placeholder="Votre mot de passe" required>
             </label>
             <button class="btn btn-primary" type="submit">Se connecter</button>
         </form>
         <div class="alert alert-danger d-none" id="login-alert" role="alert"></div>
         <p class="muted">Votre compte doit être activé pour accéder à votre profil et à vos achats.</p>
-        <p class="muted">Pas encore de compte ? <a class="link" href="/inscription">Créer un compte</a></p>
+        <p class="muted">Pas encore de compte ? <a class="link" href="/register">Créer un compte</a></p>
     </div>
 </section>
 
@@ -29,12 +29,8 @@ loginForm.addEventListener('submit', event => {
     loginAlert.classList.add('d-none');
     window.apiFetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
-        body: JSON.stringify({
-            email: loginEmail.value.trim(),
-            password: loginPassword.value,
-        }),
+        body: new FormData(loginForm),
     })
         .then((payload) => {
             if (!payload.ok) {
@@ -42,7 +38,7 @@ loginForm.addEventListener('submit', event => {
             }
             window.storeAuthToken(payload.data?.token ?? payload.token);
             const roleId = Number(payload.data?.role_id ?? payload.data?.data?.role_id ?? 0);
-            window.location.href = roleId === 1 ? '/admin' : '/profil/accueil';
+            window.location.href = roleId === 1 ? '/admin' : '/dashboard';
         })
         .catch(error => {
             loginAlert.textContent = error.message;

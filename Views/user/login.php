@@ -1,14 +1,14 @@
 <section class="section">
     <div class="container narrow">
         <h1>Connexion</h1>
-        <form class="form-grid" id="login-form">
+        <form class="form-grid" id="login-form" method="post" action="/api/auth/login">
             <label>
                 Email
-                <input type="email" id="login-email" placeholder="Votre email" required>
+                <input type="email" id="login-email" name="email" placeholder="Votre email" required>
             </label>
             <label>
                 Mot de passe
-                <input type="password" id="login-password" placeholder="Votre mot de passe" required>
+                <input type="password" id="login-password" name="password" placeholder="Votre mot de passe" required>
             </label>
             <button class="btn btn-primary" type="submit">Se connecter</button>
         </form>
@@ -29,12 +29,8 @@ loginForm.addEventListener('submit', event => {
     loginAlert.classList.add('d-none');
     window.apiFetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
-        body: JSON.stringify({
-            email: loginEmail.value.trim(),
-            password: loginPassword.value,
-        }),
+        body: new FormData(loginForm),
     })
         .then((payload) => {
             if (!payload.ok) {

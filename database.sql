@@ -136,7 +136,7 @@ CREATE TABLE media (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO roles (name) VALUES ('Admin'), ('Rédacteur');
+INSERT INTO roles (name) VALUES ('Admin'), ('Lecteur');
 
 -- Default admin account (email: admin@educationpriorite.local / password: Admin@1234)
 INSERT INTO users (role_id, full_name, email, password_hash, is_active)

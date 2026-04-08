@@ -39,8 +39,14 @@ class AuthController
             return;
         }
 
+        $roleId = $this->users->getRegistrationRoleId();
+        if ($roleId === null) {
+            $this->json(['error' => 'Aucun rôle disponible pour l\'inscription.'], 500);
+            return;
+        }
+
         $data = [
-            'role_id' => 2,
+            'role_id' => $roleId,
             'full_name' => $fullName,
             'email' => $email,
             'password_hash' => password_hash($password, PASSWORD_DEFAULT),
@@ -53,10 +59,16 @@ class AuthController
             return;
         }
 
-        AuthSession::setUser($created);
+        $verified = $this->users->findByEmail($email);
+        if ($verified === null) {
+            $this->json(['error' => 'Compte créé mais non retrouvé. Merci de réessayer.'], 500);
+            return;
+        }
 
-        $token = AuthSession::generateJwt($created);
-        $this->json(['data' => $created, 'token' => $token], 201);
+        $this->json([
+            'message' => sprintf('Compte créé avec succès, %s.', $verified['full_name'] ?? $fullName),
+            'data' => $verified,
+        ], 201);
     }
 
     public function login(): void

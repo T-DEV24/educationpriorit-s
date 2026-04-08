@@ -34,7 +34,7 @@ class UserModel extends BaseModel
 
     public function getRegistrationRoleId(): ?int
     {
-        $preferredRoles = ['Utilisateur', 'Rédacteur', 'User', 'Lecteur', 'Membre'];
+        $preferredRoles = ['Lecteur'];
         $placeholders = implode(', ', array_fill(0, count($preferredRoles), '?'));
         $sql = sprintf(
             'SELECT id FROM roles WHERE name IN (%s) ORDER BY FIELD(name, %s), id LIMIT 1',
